@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="154 Re-Life Design — 専門知を、暮らしの言葉に。アナログを、未来のデータに。釧路市を拠点とする理学療法士・村上公英による臨床DX・健康翻訳・地域再設計">
+<meta property="og:title" content="154 Re-Life Design">
+<meta property="og:description" content="専門知を、暮らしの言葉に。アナログを、未来のデータに。">
+<meta property="og:url" content="https://154relife.jp">
+<title>154 Re-Life Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --bg2: #EFEDE8;
+    --bg3: #E8E5DE;
+    --ink: #1A1A18;
+    --ink2: #5A5A56;
+    --ink3: #9A9A94;
+    --border: rgba(26,26,24,0.12);
+    --border2: rgba(26,26,24,0.22);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --max: 960px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .nav-num {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .nav-name {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    font-weight: 300;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 0.5px;
+    background: var(--ink);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    padding-top: 60px;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--serif);
+    font-size: clamp(120px, 22vw, 240px);
+    color: rgba(26,26,24,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    width: 100%;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease) 0.1s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 0.5px;
+    background: var(--ink3);
+  }
+  .hero-eyebrow span {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+
+  .hero-headline {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 68px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.2s forwards;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--ink3);
+    font-weight: 300;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.3s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s var(--ease) 0.4s forwards;
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 28px;
+    border: 0.5px solid var(--border2);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 400;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-outline:hover {
+    background: var(--bg2);
+    border-color: var(--ink);
+  }
+
+  .btn-text {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .btn-text:hover { color: var(--ink); }
+
+  .hero-geo {
+    position: absolute;
+    right: 40px;
+    bottom: 80px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink3);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    animation: fadeUp 1s var(--ease) 1s forwards;
+  }
+  .scroll-hint span {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+  .scroll-line {
+    width: 0.5px;
+    height: 32px;
+    background: var(--ink3);
+    animation: scrollPulse 2s ease-in-out 1.5s infinite;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { border-top: 0.5px solid var(--border); }
+  .section-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 48px;
+  }
+  .section-label span {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ── PILLARS ── */
+  #pillars { background: var(--bg); }
+
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 0.5px solid var(--border);
+  }
+
+  .pillar {
+    padding: 36px 32px;
+    border-right: 0.5px solid var(--border);
+    transition: background 0.25s;
+  }
+  .pillar:last-child { border-right: none; }
+  .pillar:hover { background: var(--bg2); }
+
+  .pillar-num {
+    font-family: var(--serif);
+    font-size: 48px;
+    color: rgba(26,26,24,0.08);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+
+  .pillar-en {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .pillar-jp {
+    font-size: 11px;
+    color: var(--ink3);
+    margin-bottom: 18px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+  }
+  .pillar-desc {
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--ink2);
+    font-weight: 300;
+  }
+
+  /* ── ABOUT ── */
+  #about { background: var(--bg2); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .about-name {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .about-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 28px;
+  }
+  .about-body {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--ink2);
+    font-weight: 300;
+    margin-bottom: 28px;
+  }
+  .about-detail {
+    font-size: 12px;
+    color: var(--ink3);
+    line-height: 2;
+    font-weight: 300;
+    border-top: 0.5px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .about-right { padding-top: 8px; }
+  .about-right-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 16px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    padding: 6px 12px;
+    border: 0.5px solid var(--border2);
+    font-weight: 400;
+  }
+
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .profile-row {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+  }
+  .profile-key {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    width: 60px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .profile-val { color: var(--ink2); line-height: 1.6; }
+
+  /* ── WORKS ── */
+  #works { background: var(--bg); }
+
+  .work-item {
+    display: grid;
+    grid-template-columns: 52px 1fr 80px auto;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 0;
+    border-top: 0.5px solid var(--border);
+    cursor: default;
+    transition: background 0.2s;
+  }
+  .work-item:last-child { border-bottom: 0.5px solid var(--border); }
+  .work-item:hover { background: var(--bg2); margin: 0 -40px; padding: 22px 40px; }
+
+  .work-idx {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--ink3);
+  }
+  .work-title {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 3px;
+  }
+  .work-sub {
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+  }
+  .work-cat {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    text-align: right;
+  }
+  .work-arrow {
+    font-size: 16px;
+    color: var(--ink3);
+    text-align: right;
+    transition: transform 0.2s, color 0.2s;
+  }
+  .work-item:hover .work-arrow {
+    transform: translateX(4px);
+    color: var(--ink);
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--bg2); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .contact-heading {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .contact-sub {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--ink2);
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+  .contact-rows { display: flex; flex-direction: column; gap: 12px; }
+  .contact-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .contact-key {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    width: 44px;
+    flex-shrink: 0;
+    padding-top: 3px;
+  }
+  .contact-val {
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .contact-val a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 0.5px solid var(--border2);
+    padding-bottom: 1px;
+    transition: border-color 0.2s;
+  }
+  .contact-val a:hover { border-color: var(--ink); }
+
+  .contact-right { padding-top: 48px; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+  .form-input, .form-textarea {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 0.5px solid var(--border2);
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--ink); }
+  .form-textarea { min-height: 100px; line-height: 1.7; }
+
+  .btn-submit {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--ink);
+    border: none;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    align-self: flex-start;
+    font-weight: 400;
+  }
+  .btn-submit:hover { opacity: 0.75; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid var(--border);
+    background: var(--bg);
+  }
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-left {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .footer-copy {
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+  }
+  .footer-url {
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.3); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 60px; left: 0; right: 0;
+      background: var(--bg);
+      padding: 24px 40px;
+      border-bottom: 0.5px solid var(--border);
+      gap: 20px;
+    }
+
+    .hero-inner { padding: 0 24px 72px; }
+    .hero-geo { display: none; }
+    .section-inner { padding: 60px 24px; }
+
+    .pillar-grid { grid-template-columns: 1fr; }
+    .pillar { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .pillar:last-child { border-bottom: none; }
+
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+    .contact-right { padding-top: 0; }
+
+    .work-item { grid-template-columns: 40px 1fr auto; }
+    .work-cat { display: none; }
+    .work-item:hover { margin: 0; padding: 22px 0; }
+
+    .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .nav-inner { padding: 0 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-num">154</span>
+      <span class="nav-name">Re-Life Design</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#pillars">About</a></li>
+      <li><a href="#works">Works</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text" aria-hidden="true">154</div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span>154relife.jp — Kushiro, Hokkaido</span>
+    </div>
+    <h1 class="hero-headline">
+      専門知を、<br>暮らしの言葉に。
+    </h1>
+    <p class="hero-sub">アナログを、未来のデータに。</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-outline">お問い合わせ →</a>
+      <a href="#pillars" class="btn-text">事業内容を見る</a>
+    </div>
+    <div class="hero-geo">43° N — 0154</div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section id="pillars">
+  <div class="section-inner">
+    <div class="section-label reveal"><span>Business Pillars</span></div>
+    <div class="pillar-grid reveal">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <div class="pillar-en">Clinical DX</div>
+        <div class="pillar-jp">臨床のデジタル化</div>
+        <p class="pillar-desc">フレイル評価等の評価ロジックをアルゴリズム化し、アナログな主観を「未来のデータ」に変換します。タブレット入力・自動集計・レーダーチャート出力まで一貫して設計します。</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <div class="pillar-en">Health Translation</div>
+        <div class="pillar-jp">専門知の翻訳</div>
+        <p class="pillar-desc">難解な医療用語や検査数値を、一般市民が明日から動きたくなる「暮らしの言葉」に通訳します。新聞コラム・地域講座・デジタルコンテンツで届けます。</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <div class="pillar-en">Regional Design</div>
+        <div class="pillar-jp">地域の再設計</div>
+        <p class="pillar-desc">病院・行政・地域が「三方よし」となる、持続可能な健康インフラとしての仕組みを設計します。釧路・根室地域に根ざした課題解決を行います。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label reveal"><span>About</span></div>
+    <div class="about-grid">
+      <div class="reveal">
+        <h2 class="about-name">村上 公英</h2>
+        <div class="about-title">Physical Therapist</div>
+        <p class="about-body">
+          釧路市を拠点とする理学療法士。北海道釧路市（市外局番0154・北緯43度）で、病院内の高度な評価技術と臨床知見をDXで「翻訳」し、誰もが一生歩き続けられる「健康寿命」を再設計（Re-Life）することをミッションとしています。
+        </p>
+        <p class="about-detail">
+          急性期病院のリハビリテーション科に勤務。フレイル予防・急性期リハビリテーション・臨床DXを専門とし、医療現場と地域社会をつなぐ実践的な活動を行っています。北海道理学療法士会 職能部長、北海道理学療法士連盟 釧根地区長。本サイトおよび154 Re-Life Designの活動は個人として行うものであり、所属機関とは無関係です。
+        </p>
+      </div>
+      <div class="about-right reveal">
+        <div class="about-right-label">Expertise</div>
+        <div class="tags">
+          <span class="tag">Frailty Assessment</span>
+          <span class="tag">Acute Rehab</span>
+          <span class="tag">Clinical DX</span>
+          <span class="tag">Health Literacy</span>
+          <span class="tag">Regional Health</span>
+          <span class="tag">Google Apps Script</span>
+          <span class="tag">LINE LIFF</span>
+          <span class="tag">GitHub Pages</span>
+        </div>
+        <div class="about-right-label">Profile</div>
+        <div class="profile-info">
+          <div class="profile-row">
+            <span class="profile-key">Base</span>
+            <span class="profile-val">北海道釧路市</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">License</span>
+            <span class="profile-val">理学療法士（国家資格）</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">Affil.</span>
+            <span class="profile-val">北海道理学療法士会 職能部長 ／ 北海道理学療法士連盟 釧根地区長</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">Mail</span>
+            <span class="profile-val">kimihide@154relife.jp</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS -->
+<section id="works">
+  <div class="section-inner">
+    <div class="section-label reveal"><span>Works</span></div>
+
+    <div class="work-item reveal">
+      <div class="work-idx">01</div>
+      <div>
+        <div class="work-title">健康コラム「元気をつくろう・健康のコツ」</div>
+        <div class="work-sub">釧路新聞 パレットくしろ ／ 2025年3月〜 全12回連載 ／ 北海道理学療法士会 釧根支部監修</div>
+      </div>
+      <div class="work-cat">Health Translation</div>
+      <div class="work-arrow">→</div>
+    </div>
+
+    <div class="work-item reveal">
+      <div class="work-idx">02</div>
+      <div>
+        <div class="work-title">フレイル評価記録支援ツール</div>
+        <div class="work-sub">タブレット入力・自動判定・クラウド記録 ／ 医療機関にて試験運用中</div>
+      </div>
+      <div class="work-cat">Clinical DX</div>
+      <div class="work-arrow">→</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-label reveal"><span>Contact</span></div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <h2 class="contact-heading">ご相談・<br>お問い合わせ</h2>
+        <p class="contact-sub">Clinical DX・Health Translation・Regional Designに関するご相談、講演・執筆依頼、コラボレーションのご提案をお受けしています。</p>
+        <div class="contact-rows">
+          <div class="contact-row">
+            <span class="contact-key">Mail</span>
+            <span class="contact-val"><a href="mailto:kimihide@154relife.jp">kimihide@154relife.jp</a></span>
+          </div>
+          <div class="contact-row">
+            <span class="contact-key">Web</span>
+            <span class="contact-val"><a href="https://154relife.jp">154relife.jp</a></span>
+          </div>
+          <div class="contact-row">
+            <span class="contact-key">Base</span>
+            <span class="contact-val">北海道釧路市</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-right reveal">
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label class="form-label" for="name">お名前</label>
+            <input class="form-input" type="text" id="name" name="name" placeholder="山田 太郎" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">メールアドレス</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">お問い合わせ内容</label>
+            <textarea class="form-textarea" id="message" name="message" placeholder="ご相談内容をお書きください" required></textarea>
+          </div>
+          <button class="btn-submit" type="submit">送信する →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span class="footer-logo">154 Re-Life Design</span>
+      <span class="footer-copy">© 2025 村上公英</span>
+    </div>
+    <span class="footer-url">154relife.jp</span>
+  </div>
+</footer>
+
+<script>
+  // ハンバーガーメニュー
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // スクロールリビール
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // お問い合わせフォーム（メーラー起動）
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    const body = encodeURIComponent(`お名前: ${name}\nメール: ${email}\n\n${message}`);
+    window.location.href = `mailto:kimihide@154relife.jp?subject=${encodeURIComponent('154relife.jpよりお問い合わせ')}&body=${body}`;
+  });
+</script>
+</body>
+</html>
