@@ -278,6 +278,8 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .acts,.header,.progress-bar-wrap,.tabs,.ctog { display: none!important; }
   #t-kpi { display: none!important; }
+  body { background: white!important; }
+  #app { min-height: 0!important; background: white!important; }
   #p3-report { padding: 0!important; }
   #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; }
   #rep { font-size: 13px; }
@@ -324,7 +326,6 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   .cp { font-size: 14px; }
   .line-info { page-break-inside: avoid; padding: 5px 14px; }
   .nx,.rf { page-break-inside: avoid; }
-  .rf-l { display: none!important; }
   .global-footer { display: none!important; }
 }
 </style>
@@ -415,7 +416,11 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
     <div class="complete-card">
       <div style="font-size:56px;margin-bottom:12px;">✅</div>
       <div class="complete-title">問診完了</div>
-      <div class="complete-sub">基本チェックリスト24問が終わりました。<br>スタッフに端末をお渡しください。</div>
+      <div class="complete-sub" style="margin-bottom:12px;">基本チェックリスト24問が終わりました。</div>
+      <div style="background:#1a5fa8;color:white;border-radius:14px;padding:20px 24px;margin-bottom:24px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🙋‍♂️</div>
+        <div style="font-size:22px;font-weight:800;line-height:1.5;">スタッフに端末を<br>お渡しください</div>
+      </div>
       <div id="result-summary"></div>
       <button class="btn-next" onclick="goToPhase2()">スタッフ測定パートへ →</button>
     </div>
@@ -731,7 +736,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
       <div class="summary-title">スタッフ測定　結果サマリー</div>
       <div class="summary-sub" id="sum-sub">性別基準値適用済み</div>
       <div id="sum-body"></div>
-      <button class="btn-report" onclick="goToReport()">フレイル判定・診断レポートへ →</button>
+      <button class="btn-report" onclick="goToReport()">担当者確認・研究同意へ →</button>
     </div>
   </div>
 
@@ -773,6 +778,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
         <button class="act a-pd" onclick="alert('PDF：Claude Code実装時に対応予定')">📄 PDF</button>
         <button class="act a-cs" onclick="exportCsv('normal')">📥 CSV</button>
       </div>
+      <div class="acts" style="margin-top:-6px;margin-bottom:10px;font-size:11px;color:#9abacc;">💡 印刷時はブラウザの設定で「ヘッダーとフッター」をOFFにしてください</div>
       <div id="rep">
         <div class="rh">
           <div><div class="rh-s">釧路孝仁会記念病院　高度健診センター</div><div class="rh-t">フレイル検診 結果レポート</div></div>
@@ -831,9 +837,8 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
           </div>
         </div>
         <div class="nx"><div class="nxl">次回検診予定日</div><div class="nxv" id="nxv">未定</div></div>
-        <div class="rf">
-          <div class="rf-l">釧路孝仁会記念病院　高度健診センター</div>
-          <div class="rf-r" style="flex:1;text-align:center;">© 2026 154 Re-Life Design. All rights reserved.</div>
+        <div class="rf" style="justify-content:center;">
+          <div class="rf-r">© 2026 154 Re-Life Design. All rights reserved.</div>
         </div>
       </div>
     </div>
@@ -1547,7 +1552,7 @@ function goToReport(){
   localStorage.setItem('frail_phase2', JSON.stringify(phase2Data));
 
   // Switch to Phase 3 name screen (SPA transition, not new window)
-  document.getElementById('hdr-sub').textContent = '担当者確認・研究同意';
+  document.getElementById('hdr-sub').textContent = 'レポート発行準備';
   go('p3-name');
 }
 
