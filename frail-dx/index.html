@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kushiro Frail Digital Check | 釧路孝仁会記念病院 高度健診センター</title>
+<!-- © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ============================================================
+   Base / Shared (Phase 2 as base)
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif; }
+#app { background: #f0f4f8; min-height: 600px; display: flex; flex-direction: column; align-items: center; }
+.screen { display: none; width: 100%; max-width: 860px; padding: 20px; }
+.screen.active { display: flex; flex-direction: column; }
+.header { background: #1a5fa8; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 860px; border-radius: 14px 14px 0 0; }
+.header-title { font-size: 18px; font-weight: 600; }
+.header-sub { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+.progress-bar-wrap { width: 100%; max-width: 860px; background: #dde8f5; height: 8px; }
+.progress-bar { height: 8px; background: #1a5fa8; transition: width 0.4s ease; }
+
+/* ============================================================
+   Phase 1 unique styles
+   ============================================================ */
+.start-card { background: white; border-radius: 16px; padding: 28px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-top: 20px; }
+.hospital-logo { width: 56px; height: 56px; background: #1a5fa8; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 26px; }
+.start-title { font-size: 24px; font-weight: 700; color: #1a3a5c; text-align: center; margin-bottom: 4px; }
+.start-sub { font-size: 15px; color: #5a7a9a; text-align: center; margin-bottom: 24px; }
+.field-label { font-size: 17px; font-weight: 600; color: #1a3a5c; margin-bottom: 8px; display: block; }
+.text-input { width: 100%; font-size: 28px; font-weight: 700; color: #1a3a5c; text-align: center; padding: 14px; border: 2px solid #b0c8e8; border-radius: 12px; background: #f0f6ff; outline: none; letter-spacing: 0.15em; margin-bottom: 16px; }
+.text-input:focus { border-color: #1a5fa8; }
+.body-row { display: flex; gap: 12px; margin-bottom: 8px; }
+.body-col { flex: 1; }
+.body-input { width: 100%; font-size: 26px; font-weight: 700; color: #1a3a5c; text-align: center; padding: 12px 8px; border: 2px solid #b0c8e8; border-radius: 12px; background: #f0f6ff; outline: none; appearance: auto; }
+.body-input:focus { border-color: #1a5fa8; }
+.body-unit { text-align: center; font-size: 14px; color: #8aaac0; margin-top: 4px; }
+.bmi-badge { border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; transition: background 0.3s; }
+.bmi-label { font-size: 15px; color: #5a7a9a; }
+.btn-start { width: 100%; padding: 20px; font-size: 24px; font-weight: 700; background: #1a5fa8; color: white; border: none; border-radius: 14px; cursor: pointer; transition: transform 0.1s; }
+.btn-start:active { transform: scale(0.98); }
+
+.q-wrap { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); flex: 1; }
+.q-category { background: #e8f0fb; padding: 10px 20px; font-size: 15px; font-weight: 600; color: #1a5fa8; display: flex; align-items: center; gap: 8px; }
+.q-number { font-size: 13px; color: #7a9ab8; margin-left: auto; }
+.q-illust { background: #f5f8ff; height: 120px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #e8eef8; font-size: 52px; }
+.q-text { padding: 22px 24px 16px; font-size: 25px; font-weight: 600; color: #1a3a5c; line-height: 1.5; min-height: 90px; }
+.q-hint { padding: 0 24px 16px; font-size: 15px; color: #6a8aaa; line-height: 1.6; }
+.btn-row { display: flex; gap: 12px; padding: 0 20px 20px; }
+.btn-yes, .btn-no { flex: 1; padding: 26px 10px; font-size: 30px; font-weight: 800; border: none; border-radius: 14px; cursor: pointer; transition: transform 0.12s; letter-spacing: 0.05em; }
+.btn-yes { background: #1a5fa8; color: white; }
+.btn-no  { background: #e03030; color: white; }
+.btn-yes:active, .btn-no:active { transform: scale(0.96); }
+.nav-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 4px; }
+.btn-back { font-size: 15px; color: #7a9ab8; background: none; border: 1px solid #c0d0e0; border-radius: 10px; padding: 10px 18px; cursor: pointer; }
+.q-counter { font-size: 14px; color: #9abacc; }
+.complete-card { background: white; border-radius: 16px; padding: 32px 24px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-top: 20px; }
+.complete-title { font-size: 26px; font-weight: 700; color: #1a3a5c; margin-bottom: 8px; }
+.complete-sub { font-size: 16px; color: #5a7a9a; margin-bottom: 24px; line-height: 1.6; }
+.result-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e8eef8; font-size: 16px; }
+.result-label { color: #5a7a9a; }
+.result-val { font-weight: 700; color: #1a3a5c; font-size: 17px; }
+.badge-risk { color: #e03030; }
+.badge-ok   { color: #1a8a50; }
+.btn-next { width: 100%; padding: 18px; font-size: 19px; font-weight: 700; background: #1a5fa8; color: white; border: none; border-radius: 14px; cursor: pointer; margin-top: 20px; }
+
+/* ============================================================
+   Phase 2 unique styles
+   ============================================================ */
+.section-title { font-size: 13px; font-weight: 700; color: #f0a030; letter-spacing: 0.08em; margin-bottom: 12px; padding-left: 4px; }
+.meas-card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 16px; }
+.meas-header { padding: 14px 20px; display: flex; align-items: center; gap: 12px; background: #e8f0fb; }
+.meas-icon { font-size: 34px; }
+.meas-title { font-size: 20px; font-weight: 700; color: #1a3a5c; }
+.meas-sub { font-size: 13px; color: #7a9ab8; margin-top: 2px; }
+.guide-box { margin: 0 20px 16px; background: #f5f8ff; border: 1px solid #d0e0f4; border-radius: 12px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 14px; }
+.guide-illust { font-size: 44px; line-height: 1; flex-shrink: 0; }
+.guide-text { font-size: 14px; color: #4a6a8a; line-height: 1.7; }
+.guide-title { font-size: 15px; font-weight: 700; color: #1a5fa8; margin-bottom: 4px; }
+.input-area { padding: 0 20px 20px; }
+.input-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
+.input-group { flex: 1; }
+.input-label { font-size: 14px; color: #7a9ab8; margin-bottom: 6px; display: block; }
+.num-wrap { position: relative; display: flex; align-items: center; border: 2px solid #b0c8e8; border-radius: 12px; background: #f0f6ff; overflow: hidden; }
+.num-wrap:focus-within { border-color: #1a5fa8; }
+.num-text { flex: 1; font-size: 26px; font-weight: 700; color: #1a3a5c; text-align: center; padding: 12px 4px; border: none; background: transparent; outline: none; width: 0; min-width: 0; }
+.spin-col { display: flex; flex-direction: column; border-left: 1px solid #c8d8ee; }
+.spin-btn { width: 42px; flex: 1; font-size: 15px; font-weight: 700; color: #1a5fa8; background: #e8f0fb; border: none; cursor: pointer; padding: 6px 0; display: flex; align-items: center; justify-content: center; }
+.spin-btn:active { background: #c8d8f0; }
+.spin-btn.down { border-top: 1px solid #c8d8ee; }
+.unit-label { font-size: 15px; color: #7a9ab8; font-weight: 600; padding-bottom: 14px; white-space: nowrap; }
+.calc-badge { background: #e8f0fb; border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.calc-label { font-size: 14px; color: #5a7a9a; }
+.calc-val { font-size: 20px; font-weight: 800; }
+.judge-wrap { border-radius: 10px; padding: 10px 14px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.ok-bg { background: #f0fff4; color: #1a8a50; }
+.ng-bg { background: #fff0f0; color: #e03030; }
+.btn-next-meas { font-size: 17px; font-weight: 700; color: white; background: #f0a030; border: none; border-radius: 12px; padding: 13px 24px; cursor: pointer; }
+.btn-next-meas:active { transform: scale(0.97); }
+.btn-complete { font-size: 17px; font-weight: 700; color: white; background: #1a5fa8; border: none; border-radius: 12px; padding: 13px 24px; cursor: pointer; }
+.gender-row { display: flex; gap: 12px; margin-bottom: 20px; }
+.gender-btn { flex: 1; padding: 18px; font-size: 22px; font-weight: 700; border: 2px solid #b0c8e8; border-radius: 14px; background: white; color: #5a7a9a; cursor: pointer; text-align: center; }
+.gender-btn.sel-m { background: #1a5fa8; color: white; border-color: #1a5fa8; }
+.gender-btn.sel-f { background: #d04080; color: white; border-color: #d04080; }
+
+/* MNA */
+.mna-q { margin-bottom: 18px; }
+.mna-q-text { font-size: 15px; font-weight: 600; color: #1a3a5c; margin-bottom: 10px; line-height: 1.5; }
+.mna-opts { display: flex; flex-direction: column; gap: 8px; }
+.mna-opt { padding: 12px 16px; border-radius: 10px; border: 2px solid #d0e0f0; font-size: 14px; color: #3a5a7a; background: white; cursor: pointer; text-align: left; }
+.mna-opt.selected { background: #1a5fa8; color: white; border-color: #1a5fa8; font-weight: 700; }
+.auto-box { margin: 0 20px 0; background: #f0fff4; border: 1px solid #a0e0b0; border-radius: 12px; padding: 14px 16px; }
+.auto-box-title { font-size: 13px; font-weight: 700; color: #1a8a50; margin-bottom: 10px; }
+.auto-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #d0eed8; font-size: 13px; gap: 8px; }
+.auto-item:last-child { border-bottom: none; padding-bottom: 0; }
+.auto-label { color: #5a8a60; line-height: 1.5; flex: 1; }
+.auto-val { font-weight: 700; color: #1a5fa8; white-space: nowrap; }
+.confirm-row { display: flex; align-items: center; justify-content: space-between; background: #fff8f0; border: 1px solid #f0d080; border-radius: 10px; padding: 10px 14px; margin-top: 8px; gap: 8px; }
+.confirm-label { font-size: 13px; color: #7a6000; flex: 1; }
+.confirm-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.confirm-btn { font-size: 12px; padding: 6px 10px; border-radius: 8px; border: 1.5px solid #c0c8d0; background: white; color: #3a5a7a; cursor: pointer; font-weight: 600; white-space: nowrap; }
+.confirm-btn.sel { background: #1a5fa8; color: white; border-color: #1a5fa8; }
+.e-auto-box { margin: 0 20px 12px; border-radius: 12px; padding: 14px 16px; border: 1px solid; }
+.e-detail-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+.e-detail-label { color: #5a7a9a; }
+.e-detail-val { font-weight: 700; }
+.mna-score-badge { border-radius: 10px; padding: 14px 16px; text-align: center; margin: 12px 0 0; }
+
+/* サマリー */
+.summary-card { background: white; border-radius: 16px; padding: 24px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.summary-title { font-size: 22px; font-weight: 700; color: #1a3a5c; margin-bottom: 4px; text-align: center; }
+.summary-sub { font-size: 13px; color: #7a9ab8; text-align: center; margin-bottom: 16px; }
+.sum-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #e8eef8; }
+.sum-label { color: #5a7a9a; font-size: 14px; display: flex; align-items: center; gap: 6px; flex: 1; }
+.sum-ref { font-size: 11px; color: #aac0d0; margin-left: 4px; }
+.sum-val { font-weight: 700; font-size: 15px; }
+.ok-col { color: #1a8a50; }
+.ng-col { color: #e03030; }
+.warn-col { color: #e08030; }
+.btn-report { width: 100%; padding: 18px; font-size: 19px; font-weight: 700; background: #1a5fa8; color: white; border: none; border-radius: 14px; cursor: pointer; margin-top: 20px; }
+
+/* ============================================================
+   Phase 3 unique styles (report)
+   ============================================================ */
+.rpt-screen { max-width: 860px; }
+.tabs { display: flex; margin-bottom: 14px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,.08); }
+.tab { flex: 1; padding: 11px 6px; font-size: 12px; font-weight: 600; border: none; background: white; color: #7a9ab8; cursor: pointer; border-bottom: 3px solid transparent; }
+.tab.on { color: #1a3a6a; border-bottom-color: #e87a30; background: #fdf6f0; }
+.card { background: white; border-radius: 14px; padding: 24px 22px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-top: 14px; }
+.fl { font-size: 14px; font-weight: 600; color: #1a3a5c; margin-bottom: 5px; display: block; }
+.fi { width: 100%; font-size: 20px; font-weight: 700; color: #1a3a5c; text-align: center; padding: 11px; border: 2px solid #b0c8e8; border-radius: 10px; background: #f0f6ff; outline: none; margin-bottom: 10px; }
+.fi:focus { border-color: #1a3a6a; }
+.btn-go { width: 100%; padding: 16px; font-size: 19px; font-weight: 700; background: #1a3a6a; color: white; border: none; border-radius: 12px; cursor: pointer; margin-top: 6px; }
+.acts { display: flex; gap: 7px; margin-bottom: 10px; flex-wrap: wrap; }
+.act { flex: 1; min-width: 80px; padding: 10px 5px; font-size: 12px; font-weight: 700; border: none; border-radius: 9px; cursor: pointer; }
+.a-pr { background: #1a3a6a; color: white; }
+.a-pd { background: #1a8a50; color: white; }
+.a-cs { background: #7a5fa8; color: white; }
+#rep { background: white; border-radius: 14px; box-shadow: 0 2px 14px rgba(0,0,0,.1); overflow: hidden; font-size: 12px; }
+.rh { background: linear-gradient(135deg,#1a3a6a 60%,#2a5a9a); color: white; padding: 13px 20px; display: flex; justify-content: space-between; gap: 10px; }
+.rh-s { font-size: 10px; opacity: .85; }
+.rh-t { font-size: 16px; font-weight: 700; margin-top: 2px; }
+.rh-r { font-size: 10px; text-align: right; opacity: .9; line-height: 1.8; }
+.vband { display: flex; align-items: stretch; border-bottom: 1px solid #e8eef8; }
+.vbar { width: 7px; flex-shrink: 0; }
+.vmain { flex: 1; padding: 11px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.vls { font-size: 10px; font-weight: 600; color: #7a9ab8; margin-bottom: 2px; }
+.vt { font-size: 26px; font-weight: 800; line-height: 1; white-space: nowrap; }
+.vd { font-size: 11px; color: #5a7a9a; line-height: 1.5; margin-top: 3px; max-width: 280px; }
+.vcrit { display: flex; gap: 10px; flex-wrap: wrap; background: #f5f7fa; border-radius: 7px; padding: 7px 10px; }
+.vcrit span { font-size: 10px; color: #5a7a9a; }
+.vcrit strong { color: #1a3a5c; }
+.jrow { display: flex; gap: 4px; padding: 9px 16px; background: #fafbfd; border-bottom: 1px solid #e8eef8; flex-wrap: wrap; }
+.ji { flex: 1; min-width: 90px; border-radius: 7px; padding: 6px 9px; }
+.ji-l { font-size: 9px; font-weight: 600; }
+.ji-v { font-size: 10px; font-weight: 700; margin-top: 2px; }
+.ji-r { font-size: 9px; opacity: .6; margin-top: 1px; }
+.ctog { display: flex; align-items: center; gap: 8px; padding: 7px 16px; background: #fdf6f0; border-bottom: 1px solid #f0dcc8; font-size: 11px; }
+.ctog-l { color: #7a5a3a; font-weight: 600; }
+.tbtn { padding: 3px 12px; border-radius: 7px; border: 1.5px solid #e0c8a8; background: white; color: #7a5a3a; font-size: 11px; font-weight: 600; cursor: pointer; }
+.tbtn.on { background: #e87a30; color: white; border-color: #e87a30; }
+.charts { display: flex; border-bottom: 1px solid #e8eef8; }
+.cc { flex: 1; padding: 11px 13px; }
+.cc:first-child { border-right: 1px solid #e8eef8; }
+.cc-t { font-size: 11px; font-weight: 700; color: #1a3a6a; text-align: center; }
+.cc-s { font-size: 9px; color: #9abacc; text-align: center; margin-bottom: 1px; }
+.cc-note { font-size: 8px; color: #b8c8d8; text-align: center; margin-bottom: 3px; }
+.leg { display: flex; gap: 10px; justify-content: center; margin-top: 3px; font-size: 9px; color: #5a7a9a; }
+.ld { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 2px; vertical-align: middle; }
+.score-box { display: flex; gap: 8px; padding: 10px 16px; background: #f5f7fa; border-bottom: 1px solid #e8eef8; flex-wrap: wrap; }
+.score-item { flex: 1; min-width: 170px; background: white; border-radius: 10px; padding: 10px 14px; border: 1.5px solid #e0e8f0; }
+.score-item.main-score { border-color: #1a3a6a; }
+.score-item-title { font-size: 10px; font-weight: 700; color: #5a7a9a; margin-bottom: 4px; }
+.score-num { font-size: 22px; font-weight: 800; color: #1a3a6a; }
+.score-max { font-size: 11px; color: #9abacc; }
+.score-diff { font-size: 11px; font-weight: 700; margin-top: 2px; }
+.score-comment { font-size: 10px; margin-top: 6px; padding: 5px 8px; border-radius: 6px; line-height: 1.5; }
+.score-note { font-size: 9px; color: #9abacc; margin-top: 4px; }
+.bdg { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin-left: 4px; vertical-align: middle; }
+.bok { background: #d0f0da; color: #1a8a50; }
+.bkp { background: #d0e4ff; color: #1a5fa8; }
+.bng { background: #ffe0d8; color: #e03030; }
+.diff-up { color: #1a8a50; }
+.diff-dn { color: #e03030; }
+.diff-eq { color: #7a9ab8; }
+.srow { display: flex; gap: 5px; padding: 7px 16px; background: #f0f4f8; border-bottom: 1px solid #e8eef8; flex-wrap: wrap; }
+.shd { width: 100%; font-size: 10px; font-weight: 700; color: #1a3a6a; margin-bottom: 3px; }
+.si { flex: 1; min-width: 95px; background: white; border-radius: 7px; padding: 5px 9px; border: 1px solid #e0e8f0; }
+.si-l { font-size: 9px; color: #7a9ab8; }
+.si-v { font-size: 11px; font-weight: 700; color: #1a3a5c; margin-top: 1px; }
+.sh { font-size: 11px; font-weight: 700; color: #1a3a5c; padding: 9px 16px 3px; }
+.mt { width: 100%; border-collapse: collapse; font-size: 10px; }
+.mt th { background: #f0f4f8; color: #5a7a9a; font-weight: 600; padding: 5px 7px; text-align: left; border-bottom: 1px solid #e0e8f0; }
+.mt td { padding: 5px 7px; border-bottom: 1px solid #f4f6f8; color: #2a3a4c; vertical-align: top; }
+.mt tr:last-child td { border-bottom: none; }
+.okb { color: #1a8a50; font-weight: 700; }
+.ngb { color: #e03030; font-weight: 700; }
+.skb { color: #9ab0c0; font-style: italic; }
+.dc { color: #7a9ab8; font-size: 9px; line-height: 1.4; }
+.du { color: #1a8a50; font-size: 9px; font-weight: 700; }
+.dd { color: #e03030; font-size: 9px; font-weight: 700; }
+.mnas { padding: 7px 16px; border-top: 1px solid #e8eef8; }
+.mna-t { font-size: 11px; font-weight: 700; color: #1a3a5c; margin-bottom: 2px; }
+.mna-s { font-size: 9px; color: #9abacc; margin-bottom: 6px; }
+.mna3 { display: flex; gap: 5px; }
+.mbox { flex: 1; border-radius: 7px; padding: 6px 9px; text-align: center; border: 1.5px solid #e0e8f0; }
+.mbox.act { border-width: 2px; }
+.ml { font-size: 9px; font-weight: 600; }
+.mr { font-size: 13px; font-weight: 800; margin: 2px 0; }
+.mn { font-size: 9px; font-weight: 700; }
+.adv { padding: 9px 16px; border-top: 1px solid #e8eef8; }
+.adv-t { font-size: 11px; font-weight: 700; color: #1a3a5c; margin-bottom: 6px; padding-bottom: 3px; border-bottom: 2px solid #e8eef8; }
+.ai { display: flex; gap: 7px; margin-bottom: 5px; padding: 7px 10px; background: #f5f8ff; border-radius: 7px; border-left: 3px solid #1a3a6a; }
+.ai-i { font-size: 14px; flex-shrink: 0; }
+.ai-t { font-size: 10px; color: #2a3a5c; line-height: 1.6; }
+.crs { padding: 9px 16px; border-top: 1px solid #e8eef8; }
+.crs-t { font-size: 11px; font-weight: 700; color: #1a3a5c; margin-bottom: 5px; padding-bottom: 3px; border-bottom: 2px solid #e8eef8; }
+.ccs { display: flex; gap: 5px; }
+.ccard { flex: 1; border-radius: 9px; padding: 9px 11px; border: 1.5px solid #e0e8f0; }
+.ccard.rec { border-color: #e87a30; background: #fdf6f0; }
+.cn { font-size: 11px; font-weight: 700; color: #1a3a5c; }
+.ctg { font-size: 9px; color: #7a9ab8; margin: 1px 0 3px; }
+.cp { font-size: 15px; font-weight: 800; color: #e87a30; }
+.cpd { font-size: 9px; color: #7a9ab8; margin-bottom: 3px; }
+.cf { font-size: 9px; color: #4a6a8a; line-height: 1.7; }
+.rb { display: inline-block; background: #e87a30; color: white; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin-bottom: 2px; }
+.line-info { padding: 9px 16px; border-top: 1px solid #e8eef8; display: flex; align-items: center; gap: 14px; background: #f9fff9; }
+.line-info-icon { width: 48px; height: 48px; background: #06c755; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; flex-shrink: 0; }
+.line-info-text { font-size: 10px; color: #3a5a3a; line-height: 1.8; }
+.nx { padding: 9px 16px 8px; border-top: 1px solid #e8eef8; }
+.nxl { font-size: 10px; color: #7a9ab8; }
+.nxv { font-size: 12px; font-weight: 700; color: #1a3a5c; margin-top: 1px; }
+.rf { background: #1a3a6a; color: white; padding: 7px 16px; display: flex; justify-content: space-between; align-items: center; }
+.rf-l { font-size: 9px; opacity: .8; }
+.rf-r { font-size: 9px; opacity: .7; }
+.score-note-short { display: none; }
+.skip-notice { display: inline-block; background: #f0f4f8; color: #9ab0c0; font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
+/* KPI */
+.kc { background: white; border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 8px rgba(0,0,0,.07); margin-bottom: 10px; }
+.kt { font-size: 14px; font-weight: 700; color: #1a3a5c; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e8eef8; }
+.kg { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+.ki { background: #f5f8ff; border-radius: 8px; padding: 10px 12px; text-align: center; }
+.ki-l { font-size: 10px; color: #7a9ab8; margin-bottom: 3px; line-height: 1.4; }
+.ki-v { font-size: 20px; font-weight: 800; color: #1a3a6a; }
+.ki-u { font-size: 10px; color: #9abacc; }
+.ki-n { font-size: 9px; color: #9abacc; margin-top: 1px; }
+.kbw { margin-bottom: 6px; }
+.kbl { display: flex; justify-content: space-between; font-size: 10px; color: #5a7a9a; margin-bottom: 2px; }
+.kbb { background: #e8eef8; border-radius: 5px; height: 9px; overflow: hidden; }
+.kbf { height: 9px; border-radius: 5px; }
+.bex { padding: 8px 12px; font-size: 11px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin: 0 5px 5px 0; }
+.bex-p { background: #7a5fa8; color: white; }
+.bex-c { background: #1a8a50; color: white; }
+.bex-r { background: #1a3a6a; color: white; }
+
+@media print {
+  @page { margin: 10mm 5mm; size: A4; }
+  .acts,.header,.progress-bar-wrap,.tabs,.ctog { display: none!important; }
+  #t-kpi { display: none!important; }
+  #p3-report { padding: 0!important; }
+  #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; }
+  #rep { font-size: 13px; }
+  .vls { font-size: 11px; }
+  .vt { font-size: 20px; }
+  .vd { font-size: 12px; }
+  .ji-l { font-size: 11px; }
+  .ji-v { font-size: 12px; }
+  .ji-r { font-size: 10px; }
+  .score-num { font-size: 20px; }
+  .score-note { font-size: 11px; }
+  .sh { font-size: 13px; }
+  .mt { font-size: 11px; }
+  .mt th,.mt td { padding: 4px 6px; }
+  .dc { font-size: 10px; }
+  .adv-t { font-size: 13px; }
+  .ai-t { font-size: 11px; }
+  .cn { font-size: 12px; }
+  .cf { font-size: 10px; }
+  .rh { padding: 5px 14px; }
+  .rh-r { font-size: 9px; line-height: 1.6; text-align: right; }
+  .rh-r br { display: none!important; }
+  .vband { page-break-inside: avoid; padding: 3px 0; }
+  .vmain { padding: 5px 14px; }
+  .vcrit { padding: 5px 8px; font-size: 9px; }
+  .jrow { page-break-inside: avoid; flex-wrap: wrap; padding: 4px 14px; }
+  .ji { padding: 3px 6px; }
+  .charts { display: flex!important; page-break-inside: avoid; }
+  .cc { flex: 1; padding: 4px 4px; }
+  .cc canvas { max-height: 200px!important; }
+  .cc { overflow: visible; }
+  .cc-t { font-size: 10px; }
+  .cc-s { font-size: 8px; }
+  .leg { font-size: 8px; }
+  .score-box { page-break-inside: avoid; padding: 6px 14px; }
+  .score-item { padding: 6px 10px; }
+  .score-note-long { display: none!important; }
+  .score-note-short { display: block!important; }
+  .sh { page-break-before: auto; }
+  .mnas { display: none!important; }
+  .adv { page-break-inside: avoid; padding: 6px 14px; }
+  .ai { margin-bottom: 3px; padding: 5px 8px; }
+  .crs { page-break-inside: avoid; padding: 6px 14px; }
+  .ccs { gap: 3px; }
+  .ccard { padding: 6px 8px; }
+  .cp { font-size: 14px; }
+  .line-info { page-break-inside: avoid; padding: 5px 14px; }
+  .nx,.rf { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Shared header -->
+  <div class="header">
+    <div>
+      <div class="header-title">Kushiro Frail Digital Check</div>
+      <div class="header-sub" id="hdr-sub">釧路孝仁会記念病院 高度健診センター</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:13px;opacity:0.8;margin-top:2px;" id="hdr-id"></div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="prog" style="width:0%"></div></div>
+
+  <!-- ============================================================
+       Phase 1 screens
+       ============================================================ -->
+  <!-- P1 START -->
+  <div class="screen active" id="p1-start">
+    <div class="start-card">
+      <div class="hospital-logo">🏥</div>
+      <div class="start-title">フレイル検診</div>
+      <div class="start-sub">基本チェックリスト（24問）</div>
+      <span class="field-label">受診者番号</span>
+      <input class="text-input" id="p1-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
+      <span class="field-label">身長・体重 <span style="font-size:13px;font-weight:400;color:#8aaac0;">（BMIを自動計算）</span></span>
+      <div class="body-row">
+        <div class="body-col">
+          <input class="body-input" id="p1-ht" type="number" value="160" min="100" max="220" step="0.5" inputmode="decimal" oninput="p1GuardMin('p1-ht',100); p1CalcBmi()" onchange="p1GuardMin('p1-ht',100); p1CalcBmi()" />
+          <div class="body-unit">身長 (cm)</div>
+        </div>
+        <div class="body-col">
+          <input class="body-input" id="p1-wt" type="number" value="55" min="20" max="200" step="0.5" inputmode="decimal" oninput="p1GuardMin('p1-wt',20); p1CalcBmi()" onchange="p1GuardMin('p1-wt',20); p1CalcBmi()" />
+          <div class="body-unit">体重 (kg)</div>
+        </div>
+      </div>
+      <div class="bmi-badge" id="p1-bmi-badge" style="background:#e8f0fb;">
+        <span class="bmi-label">BMI</span>
+        <span style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:28px;font-weight:800;" id="p1-bmi-val">21.5</span>
+          <span style="font-size:15px;font-weight:600;" id="p1-bmi-cat">普通体重</span>
+        </span>
+      </div>
+      <button class="btn-start" onclick="p1StartCheck()">検診を開始する</button>
+    </div>
+  </div>
+
+  <!-- P1 QUESTION -->
+  <div class="screen" id="p1-question" style="padding:0;">
+    <div class="q-wrap">
+      <div class="q-category">
+        <span id="q-cat-icon">🚌</span>
+        <span id="q-cat-name">運動・移動</span>
+        <span class="q-number" id="q-num">1 / 24</span>
+      </div>
+      <div class="q-illust" id="q-illust">🚌</div>
+      <div class="q-text"  id="q-text"></div>
+      <div class="q-hint"  id="q-hint"></div>
+      <div class="btn-row">
+        <button class="btn-yes" onclick="p1Answer(false)">はい</button>
+        <button class="btn-no"  onclick="p1Answer(true)">いいえ</button>
+      </div>
+    </div>
+    <div class="nav-row" style="padding:12px 20px;background:white;border-top:1px solid #e0e8f0;border-radius:0 0 16px 16px;margin-top:-1px;">
+      <button class="btn-back" onclick="p1GoBack()">← 前の質問</button>
+      <span class="q-counter" id="q-ctr">回答済み: 0問</span>
+    </div>
+  </div>
+
+  <!-- P1 COMPLETE -->
+  <div class="screen" id="p1-complete">
+    <div class="complete-card">
+      <div style="font-size:56px;margin-bottom:12px;">✅</div>
+      <div class="complete-title">問診完了</div>
+      <div class="complete-sub">基本チェックリスト24問が終わりました。<br>スタッフに端末をお渡しください。</div>
+      <div id="result-summary"></div>
+      <button class="btn-next" onclick="goToPhase2()">スタッフ測定パートへ →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Phase 2 screens
+       ============================================================ -->
+  <!-- P2 START -->
+  <div class="screen" id="p2-start">
+    <div class="start-card">
+      <div class="hospital-logo">🏥</div>
+      <div class="start-title">Kushiro Frail Digital Check</div>
+      <div class="start-sub">受診者情報・身体計測の入力</div>
+      <span class="field-label">受診者番号</span>
+      <input class="text-input" id="p2-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
+      <span class="field-label">年齢</span>
+      <div class="num-wrap" style="max-width:200px;margin:0 auto 16px;">
+        <input class="num-text" id="p2-age" type="text" inputmode="numeric" value="70" oninput="p2AgeValue=parseInt(this.value)||70">
+        <div class="spin-col">
+          <button class="spin-btn up" onmousedown="ss('p2-age',1,1,40,100,0,null)" onmouseup="stopS()" ontouchstart="ss('p2-age',1,1,40,100,0,null)" ontouchend="stopS()">▲</button>
+          <button class="spin-btn down" onmousedown="ss('p2-age',1,-1,40,100,0,null)" onmouseup="stopS()" ontouchstart="ss('p2-age',1,-1,40,100,0,null)" ontouchend="stopS()">▼</button>
+        </div>
+      </div>
+      <div class="body-unit" style="margin-top:-12px;margin-bottom:16px;">歳</div>
+      <span class="field-label">性別</span>
+      <div class="gender-row">
+        <button class="gender-btn" id="btn-male" onclick="setGender('male')">♂　男性</button>
+        <button class="gender-btn" id="btn-female" onclick="setGender('female')">♀　女性</button>
+      </div>
+      <span class="field-label">身長・体重 <span style="font-size:13px;font-weight:400;color:#8aaac0;">（BMI自動計算・小数点1桁）</span></span>
+      <div class="body-row">
+        <div class="body-col">
+          <div class="num-wrap">
+            <input class="num-text" id="p2-ht" type="text" inputmode="decimal" value="160.0" oninput="p2CalcBmi()" onchange="p2CalcBmi()">
+            <div class="spin-col">
+              <button class="spin-btn up" onmousedown="ss('p2-ht',0.1,1,100,220,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-ht',0.1,1,100,220,1,'p2CalcBmi')" ontouchend="stopS()">▲</button>
+              <button class="spin-btn down" onmousedown="ss('p2-ht',0.1,-1,100,220,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-ht',0.1,-1,100,220,1,'p2CalcBmi')" ontouchend="stopS()">▼</button>
+            </div>
+          </div>
+          <div class="body-unit">身長 (cm)</div>
+        </div>
+        <div class="body-col">
+          <div class="num-wrap">
+            <input class="num-text" id="p2-wt" type="text" inputmode="decimal" value="55.0" oninput="p2CalcBmi()" onchange="p2CalcBmi()">
+            <div class="spin-col">
+              <button class="spin-btn up" onmousedown="ss('p2-wt',0.1,1,20,200,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-wt',0.1,1,20,200,1,'p2CalcBmi')" ontouchend="stopS()">▲</button>
+              <button class="spin-btn down" onmousedown="ss('p2-wt',0.1,-1,20,200,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-wt',0.1,-1,20,200,1,'p2CalcBmi')" ontouchend="stopS()">▼</button>
+            </div>
+          </div>
+          <div class="body-unit">体重 (kg)</div>
+        </div>
+      </div>
+      <div class="bmi-badge" id="p2-bmi-badge" style="background:#f0fff4;">
+        <span style="font-size:15px;color:#5a7a9a;">BMI</span>
+        <span style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:28px;font-weight:800;color:#1a8a50;" id="p2-bmi-val">21.5</span>
+          <span style="font-size:15px;font-weight:600;color:#1a8a50;" id="p2-bmi-cat">普通体重</span>
+        </span>
+      </div>
+      <!-- 研究同意書 -->
+      <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">📋 学術研究へのデータ使用に関するご説明と同意</div>
+        <div style="font-size:12px;color:#5a7a9a;line-height:1.7;margin-bottom:10px;">本検診で得られた測定データは、個人が特定されない統計情報として、地域のフレイル対策向上を目的とした学術研究・学会発表に活用させていただく場合があります。<br><span style="font-size:11px;color:#8aaac0;">研究責任者：村上公英（理学療法士）</span></div>
+        <div style="display:flex;gap:10px;">
+          <div id="consent-yes" onclick="setConsent(true)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意する</div>
+          <div id="consent-no"  onclick="setConsent(false)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意しない</div>
+        </div>
+      </div>
+      <button class="btn-start" onclick="startMeas()">測定パートを開始する</button>
+    </div>
+  </div>
+
+  <!-- 1. 握力 -->
+  <div class="screen" id="scr-grip">
+    <div class="section-title">測定 1 / 7　筋力</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🏋️</span><div><div class="meas-title">握力測定</div><div class="meas-sub" id="grip-sub">左右各1回・最大値を自動選択</div></div></div>
+      <div class="guide-box"><span class="guide-illust">✊</span><div class="guide-text"><div class="guide-title">測定のポイント</div>立位または椅子座位で腕を自然に下げた状態でしっかり握る。左右それぞれ最大値を記録。利き手から測定。<br><strong style="color:#1a5fa8;" id="grip-std-text">基準値：---</strong></div></div>
+      <div class="input-area">
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">右手 (kg)</span>
+            <div class="num-wrap"><input class="num-text" id="grip-r" type="text" inputmode="decimal" value="25.0" oninput="onNI('grip-r',0,80,1);judgeGrip()" onchange="judgeGrip()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('grip-r',0.1,1,0,80,1,'judgeGrip')" onmouseup="stopS()" ontouchstart="ss('grip-r',0.1,1,0,80,1,'judgeGrip')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('grip-r',0.1,-1,0,80,1,'judgeGrip')" onmouseup="stopS()" ontouchstart="ss('grip-r',0.1,-1,0,80,1,'judgeGrip')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <div class="input-group"><span class="input-label">左手 (kg)</span>
+            <div class="num-wrap"><input class="num-text" id="grip-l" type="text" inputmode="decimal" value="23.0" oninput="onNI('grip-l',0,80,1);judgeGrip()" onchange="judgeGrip()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('grip-l',0.1,1,0,80,1,'judgeGrip')" onmouseup="stopS()" ontouchstart="ss('grip-l',0.1,1,0,80,1,'judgeGrip')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('grip-l',0.1,-1,0,80,1,'judgeGrip')" onmouseup="stopS()" ontouchstart="ss('grip-l',0.1,-1,0,80,1,'judgeGrip')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="calc-badge"><span class="calc-label">最大値（自動）</span><span class="calc-val" id="grip-max">25.0 kg</span></div>
+        <div id="grip-judge" class="judge-wrap ng-bg">⚠️　基準値未満</div>
+        <div style="margin-top:10px;text-align:right;">
+          <button id="grip-skip-btn" onclick="toggleSkip('grip')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('p2-start')">← 受診者情報へ</button><button class="btn-next-meas" onclick="go('scr-calf')">次へ（下腿周径）→</button></div>
+  </div>
+
+  <!-- 2. 下腿周径 -->
+  <div class="screen" id="scr-calf">
+    <div class="section-title">測定 2 / 7　筋肉量（簡易）</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🦵</span><div><div class="meas-title">下腿周径（ふくらはぎ周囲長）</div><div class="meas-sub" id="calf-sub">左右最大部位をメジャーで計測</div></div></div>
+      <div class="guide-box"><span class="guide-illust">📐</span><div class="guide-text"><div class="guide-title">測定のポイント</div>椅子座位で膝90°屈曲。ふくらはぎの最も太い部分をメジャーで計測。左右両側を測定し大きい値を採用。<br><span id="calf-guide-std" style="color:#1a5fa8;font-weight:600;">基準：男性 34cm未満 / 女性 33cm未満 でサルコペニアリスク</span></div></div>
+      <div class="input-area">
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">右脚 (cm)</span>
+            <div class="num-wrap"><input class="num-text" id="calf-r" type="text" inputmode="decimal" value="34.0" oninput="onNI('calf-r',0,80,1);judgeCalf()" onchange="judgeCalf()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('calf-r',0.1,1,0,80,1,'judgeCalf')" onmouseup="stopS()" ontouchstart="ss('calf-r',0.1,1,0,80,1,'judgeCalf')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('calf-r',0.1,-1,0,80,1,'judgeCalf')" onmouseup="stopS()" ontouchstart="ss('calf-r',0.1,-1,0,80,1,'judgeCalf')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <div class="input-group"><span class="input-label">左脚 (cm)</span>
+            <div class="num-wrap"><input class="num-text" id="calf-l" type="text" inputmode="decimal" value="33.5" oninput="onNI('calf-l',0,80,1);judgeCalf()" onchange="judgeCalf()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('calf-l',0.1,1,0,80,1,'judgeCalf')" onmouseup="stopS()" ontouchstart="ss('calf-l',0.1,1,0,80,1,'judgeCalf')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('calf-l',0.1,-1,0,80,1,'judgeCalf')" onmouseup="stopS()" ontouchstart="ss('calf-l',0.1,-1,0,80,1,'judgeCalf')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="calc-badge"><span class="calc-label">最大値（自動）</span><span class="calc-val" id="calf-max">34.0 cm</span></div>
+        <div id="calf-judge" class="judge-wrap ok-bg">✓　34.0 cm（基準以上）</div>
+        <div style="margin-top:10px;text-align:right;"><button id="calf-skip-btn" onclick="toggleSkip('calf')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button></div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-grip')">← 握力へ</button><button class="btn-next-meas" onclick="go('scr-walk')">次へ（歩行速度）→</button></div>
+  </div>
+
+  <!-- 3. 歩行速度 -->
+  <div class="screen" id="scr-walk">
+    <div class="section-title">測定 3 / 7　歩行速度</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🚶</span><div><div class="meas-title">4m歩行速度</div><div class="meas-sub">ストップウォッチで計測 → 速度を自動計算</div></div></div>
+      <div class="guide-box"><span class="guide-illust">⏱️</span><div class="guide-text"><div class="guide-title">測定のポイント</div>4mのコースを普通の速さで歩く。補助具（杖・歩行器）使用可。加速・減速区間を除いた中間4mを計測。<br><strong style="color:#1a5fa8;">基準値：1.0m/秒以上</strong></div></div>
+      <div class="input-area">
+        <div style="text-align:center;margin-bottom:10px;">
+          <div id="walk-sw-display" style="font-size:64px;font-weight:900;color:#1a3a5c;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;">0.0</div>
+          <button id="walk-start-btn" onclick="startSW('walk')" style="display:inline-block;width:160px;padding:14px 0;font-size:16px;font-weight:700;background:#1a8a50;color:white;border:none;border-radius:12px;cursor:pointer;">▶ スタート</button>
+          <button id="walk-stop-btn" onclick="stopSW('walk')" style="display:none;width:160px;padding:14px 0;font-size:16px;font-weight:700;background:#e03030;color:white;border:none;border-radius:12px;cursor:pointer;">■ ストップ</button>
+        </div>
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">所要時間（修正可）</span>
+            <div class="num-wrap"><input class="num-text" id="walk-sec" type="text" inputmode="decimal" value="4.0" oninput="onNI('walk-sec',0.1,60,1);calcWalk()" onchange="calcWalk()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('walk-sec',0.1,1,0.1,60,1,'calcWalk')" onmouseup="stopS()" ontouchstart="ss('walk-sec',0.1,1,0.1,60,1,'calcWalk')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('walk-sec',0.1,-1,0.1,60,1,'calcWalk')" onmouseup="stopS()" ontouchstart="ss('walk-sec',0.1,-1,0.1,60,1,'calcWalk')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <span class="unit-label">秒</span>
+        </div>
+        <div class="calc-badge"><span class="calc-label">歩行速度（自動計算）</span><span class="calc-val" id="walk-speed">1.00 m/s</span></div>
+        <div id="walk-judge" class="judge-wrap ok-bg">✓　基準値以上</div>
+        <div style="margin-top:10px;text-align:right;"><button id="walk-skip-btn" onclick="toggleSkip('walk')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button></div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-calf')">← 下腿周径へ</button><button class="btn-next-meas" onclick="go('scr-standup')">次へ（立ち上がり）→</button></div>
+  </div>
+
+  <!-- 4. 5回立ち上がり -->
+  <div class="screen" id="scr-standup">
+    <div class="section-title">測定 4 / 7　下肢筋力</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🪑</span><div><div class="meas-title">5回立ち上がりテスト</div><div class="meas-sub">ストップウォッチで計測</div></div></div>
+      <div class="guide-box"><span class="guide-illust">⚠️</span><div class="guide-text"><div class="guide-title">測定のポイント</div>椅子の高さ40〜45cm。<strong>腕を胸の前で組む</strong>（手を使って立つと無効）。<br>① 合図で素早く立ち上がり、<strong>完全に膝を伸ばす</strong>。<br>② すぐに座る（これを1回とカウント）。<br>③ 5回繰り返し、<strong>5回目に完全に立ち上がった状態</strong>でストップ。<br><strong style="color:#1a5fa8;">基準値：12秒以内</strong></div></div>
+      <div class="input-area">
+        <div style="text-align:center;margin-bottom:10px;">
+          <div id="standup-sw-display" style="font-size:64px;font-weight:900;color:#1a3a5c;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;">0.0</div>
+          <button id="standup-start-btn" onclick="startSW('standup')" style="display:inline-block;width:160px;padding:14px 0;font-size:16px;font-weight:700;background:#1a8a50;color:white;border:none;border-radius:12px;cursor:pointer;">▶ スタート</button>
+          <button id="standup-stop-btn" onclick="stopSW('standup')" style="display:none;width:160px;padding:14px 0;font-size:16px;font-weight:700;background:#e03030;color:white;border:none;border-radius:12px;cursor:pointer;">■ ストップ</button>
+        </div>
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">所要時間（修正可）</span>
+            <div class="num-wrap"><input class="num-text" id="standup-sec" type="text" inputmode="decimal" value="10.0" oninput="onNI('standup-sec',0.1,120,1);judgeStandup()" onchange="judgeStandup()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('standup-sec',0.1,1,0.1,120,1,'judgeStandup')" onmouseup="stopS()" ontouchstart="ss('standup-sec',0.1,1,0.1,120,1,'judgeStandup')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('standup-sec',0.1,-1,0.1,120,1,'judgeStandup')" onmouseup="stopS()" ontouchstart="ss('standup-sec',0.1,-1,0.1,120,1,'judgeStandup')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <span class="unit-label">秒</span>
+        </div>
+        <div id="standup-judge" class="judge-wrap ok-bg">✓　基準値以内</div>
+        <div style="margin-top:10px;text-align:right;"><button id="standup-skip-btn" onclick="toggleSkip('standup')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button></div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-walk')">← 歩行速度へ</button><button class="btn-next-meas" onclick="go('scr-oneleg')">次へ（片足立ち）→</button></div>
+  </div>
+
+  <!-- 5. 開眼片足立ちテスト -->
+  <div class="screen" id="scr-oneleg">
+    <div class="section-title">測定 5 / 7　バランス機能</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🧍</span><div><div class="meas-title">開眼片足立ちテスト</div><div class="meas-sub">立ちやすい方の足で1回（左右どちらでも可）・上限60秒</div></div></div>
+      <div class="guide-box"><span class="guide-illust">⚠️</span><div class="guide-text"><div class="guide-title">測定のポイント（安全第一）</div>
+        壁や手すりの近くで実施。滑りにくい床・運動靴または裸足。<br>
+        <strong>開始：</strong>両手を腰に当て、立ちやすい方の足で立ち、反対の足を少し浮かせる（こぶし1つ分）。<br>
+        <strong>停止条件：</strong>浮かせた足が床についた / 軸足がずれた / 手が腰から外れた<br>
+        <strong style="color:#1a5fa8;">基準値：15秒以上</strong>
+      </div></div>
+      <div class="input-area">
+        <div style="text-align:center;margin-bottom:14px;">
+          <div id="oneleg-display" style="font-size:64px;font-weight:900;color:#1a3a5c;line-height:1;margin-bottom:12px;font-variant-numeric:tabular-nums;">0.0</div>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button id="oneleg-start-btn" onclick="startOneLeg()" style="padding:14px 32px;font-size:17px;font-weight:700;background:#1a8a50;color:white;border:none;border-radius:12px;cursor:pointer;">▶ スタート</button>
+            <button id="oneleg-stop-btn" onclick="stopOneLeg()" style="display:none;padding:14px 32px;font-size:17px;font-weight:700;background:#e03030;color:white;border:none;border-radius:12px;cursor:pointer;">■ ストップ</button>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">計測時間（修正可）</span>
+            <div class="num-wrap"><input class="num-text" id="oneleg-sec" type="text" inputmode="decimal" value="0.0" oninput="onNI('oneleg-sec',0,60,1);judgeOneLeg()" onchange="judgeOneLeg()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('oneleg-sec',0.1,1,0,60,1,'judgeOneLeg')" onmouseup="stopS()" ontouchstart="ss('oneleg-sec',0.1,1,0,120,1,'judgeOneLeg')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('oneleg-sec',0.1,-1,0,60,1,'judgeOneLeg')" onmouseup="stopS()" ontouchstart="ss('oneleg-sec',0.1,-1,0,120,1,'judgeOneLeg')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <span class="unit-label">秒</span>
+        </div>
+        <div id="oneleg-judge" class="judge-wrap ng-bg">⚠️　基準値未満</div>
+        <div style="margin-top:10px;text-align:right;"><button id="oneleg-skip-btn" onclick="toggleSkip('oneleg')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button></div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-standup')">← 立ち上がりへ</button><button class="btn-next-meas" onclick="go('scr-rsst')">次へ（RSST）→</button></div>
+  </div>
+
+  <!-- 6. 反復唾液嚥下テスト（RSST） -->
+  <div class="screen" id="scr-rsst">
+    <div class="section-title">測定 6 / 7　嚥下機能</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">👄</span><div><div class="meas-title">反復唾液嚥下テスト（RSST）</div><div class="meas-sub">30秒間の嚥下回数を計測</div></div></div>
+      <div class="guide-box"><span class="guide-illust">👆</span><div class="guide-text"><div class="guide-title">測定のポイント</div>人差し指を甲状軟骨（喉仏）に軽く当て、嚥下のたびに喉仏が指を乗り越えるのを確認。<br>「できるだけ何度もつばを飲み込んでください」と声かけ。<br><strong style="color:#1a5fa8;">基準：30秒で3回以上</strong></div></div>
+      <div class="input-area">
+        <div style="text-align:center;margin-bottom:14px;">
+          <div id="rsst-timer-label" style="font-size:13px;font-weight:700;color:#1a5fa8;margin-bottom:6px;">タイマーをスタートして計測してください</div>
+          <div id="rsst-countdown" style="font-size:56px;font-weight:900;color:#1a3a5c;line-height:1;margin-bottom:10px;">30</div>
+          <button id="rsst-start-btn" onclick="startRsstTimer()" style="padding:12px 32px;font-size:16px;font-weight:700;background:#1a5fa8;color:white;border:none;border-radius:12px;cursor:pointer;">▶ 30秒スタート</button>
+          <button id="rsst-stop-btn" onclick="stopRsstTimer()" style="display:none;padding:12px 32px;font-size:16px;font-weight:700;background:#e03030;color:white;border:none;border-radius:12px;cursor:pointer;">■ 停止</button>
+        </div>
+        <div class="input-row">
+          <div class="input-group"><span class="input-label">嚥下回数（30秒）</span>
+            <div class="num-wrap"><input class="num-text" id="rsst-cnt" type="text" inputmode="numeric" value="3" oninput="onNI('rsst-cnt',0,20,0);judgeRsst()" onchange="judgeRsst()">
+              <div class="spin-col"><button class="spin-btn up" onmousedown="ss('rsst-cnt',1,1,0,20,0,'judgeRsst')" onmouseup="stopS()" ontouchstart="ss('rsst-cnt',1,1,0,20,0,'judgeRsst')" ontouchend="stopS()">▲</button><button class="spin-btn down" onmousedown="ss('rsst-cnt',1,-1,0,20,0,'judgeRsst')" onmouseup="stopS()" ontouchstart="ss('rsst-cnt',1,-1,0,20,0,'judgeRsst')" ontouchend="stopS()">▼</button></div>
+            </div>
+          </div>
+          <span class="unit-label">回</span>
+        </div>
+        <div id="rsst-judge" class="judge-wrap ok-bg">✓　3 回　基準値以上</div>
+        <div style="margin-top:10px;text-align:right;"><button id="rsst-skip-btn" onclick="toggleSkip('rsst')" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid #c0d0e0;background:white;color:#7a9ab8;cursor:pointer;">測定困難</button></div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-oneleg')">← 片足立ちへ</button><button class="btn-next-meas" onclick="go('scr-mna')">次へ（栄養評価）→</button></div>
+  </div>
+
+  <!-- 7. MNA-SF -->
+  <div class="screen" id="scr-mna">
+    <div class="section-title">測定 7 / 7　栄養評価</div>
+    <div class="meas-card">
+      <div class="meas-header"><span class="meas-icon">🥗</span><div><div class="meas-title">簡易栄養状態評価（MNA®-SF）</div><div class="meas-sub">スタッフが確認しながら評価する</div></div></div>
+      <div class="input-area" style="padding-top:12px;">
+        <!-- A: 食事量 -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">A.</strong>　過去3ヶ月間で食欲不振・消化器系の問題・そしゃく・嚥下困難などで食事量が減少しましたか？</div>
+          <div class="mna-opts">
+            <button class="mna-opt" id="mna-a-0" onclick="selMna('a',0)">0点：著しい食事量の減少</button>
+            <button class="mna-opt" id="mna-a-1" onclick="selMna('a',1)">1点：中等度の食事量の減少</button>
+            <button class="mna-opt selected" id="mna-a-2" onclick="selMna('a',2)">2点：食事量の減少なし</button>
+          </div>
+        </div>
+        <!-- B: 体重減少 -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">B.</strong>　過去3ヶ月間の体重減少はありましたか？</div>
+          <div class="mna-opts">
+            <button class="mna-opt" id="mna-b-0" onclick="selMna('b',0)">0点：3kg以上の体重減少</button>
+            <button class="mna-opt" id="mna-b-1" onclick="selMna('b',1)">1点：わからない</button>
+            <button class="mna-opt" id="mna-b-2" onclick="selMna('b',2)">2点：1〜3kgの体重減少</button>
+            <button class="mna-opt selected" id="mna-b-3" onclick="selMna('b',3)">3点：体重減少なし</button>
+          </div>
+        </div>
+        <!-- C: 自力歩行 -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">C.</strong>　自力で歩けますか？（基本チェックリスト Q6〜8より自動推定）</div>
+          <div class="auto-box" style="margin:0 0 8px;border-radius:10px;">
+            <div class="auto-item" style="border-bottom:none;padding:0;">
+              <span class="auto-label" style="font-size:13px;">自動推定値</span>
+              <span class="auto-val" id="mna-c-auto">---</span>
+            </div>
+          </div>
+          <div class="confirm-row" style="margin:0;">
+            <span class="confirm-label">スタッフ確認・修正</span>
+            <div class="confirm-btns">
+              <button class="confirm-btn" id="c-btn-0" onclick="setMnaC(0)">0点<br><span style="font-size:10px;">ベッド上</span></button>
+              <button class="confirm-btn" id="c-btn-1" onclick="setMnaC(1)">1点<br><span style="font-size:10px;">屋内のみ</span></button>
+              <button class="confirm-btn sel" id="c-btn-2" onclick="setMnaC(2)">2点<br><span style="font-size:10px;">外出可</span></button>
+            </div>
+          </div>
+        </div>
+        <!-- D: 急性疾患・ストレス -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">D.</strong>　過去3ヶ月間で精神的ストレスや急性疾患を経験しましたか？</div>
+          <div class="mna-opts">
+            <button class="mna-opt" id="mna-d-0" onclick="selMna('d',0)">0点：はい（ストレス・急性疾患あり）</button>
+            <button class="mna-opt selected" id="mna-d-2" onclick="selMna('d',2)">2点：いいえ（なし）</button>
+          </div>
+        </div>
+        <!-- E: 神経・精神的問題 -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">E.</strong>　神経・精神的問題はありますか？（基本CL 認知Q17〜19・うつQ20〜24より自動判定）</div>
+          <div class="auto-box" style="margin:0 0 8px;border-radius:10px;">
+            <div class="auto-item" style="padding-top:0;">
+              <span class="auto-label" style="font-size:13px;">自動推定値</span>
+              <span class="auto-val" id="mna-e-auto">---</span>
+            </div>
+            <div class="auto-item">
+              <span class="auto-label" style="font-size:12px;color:#5a8a60;">認知項目（Q17〜19）該当数</span>
+              <span style="font-weight:700;color:#1a5fa8;font-size:13px;" id="e-cog-cnt">---</span>
+            </div>
+            <div class="auto-item">
+              <span class="auto-label" style="font-size:12px;color:#5a8a60;">うつ項目（Q20〜24）該当数</span>
+              <span style="font-weight:700;color:#1a5fa8;font-size:13px;" id="e-dep-cnt">---</span>
+            </div>
+            <div class="auto-item" style="border-bottom:none;padding-bottom:0;padding-top:6px;">
+              <span class="auto-label" style="font-size:12px;font-weight:700;color:#3a6a40;">判定根拠</span>
+              <span style="font-weight:700;font-size:12px;color:#1a3a5c;text-align:right;max-width:200px;line-height:1.4;" id="e-reason">---</span>
+            </div>
+          </div>
+          <div id="e-detail-box" style="display:none;"></div>
+          <div class="confirm-row" style="margin:0;">
+            <span class="confirm-label">スタッフ確認・修正<br><span style="font-size:11px;color:#a09050;">HDS-R・認知症自立度等がある場合は修正</span></span>
+            <div class="confirm-btns">
+              <button class="confirm-btn" id="e-btn-0" onclick="setMnaE(0)">0点<br><span style="font-size:10px;">重度</span></button>
+              <button class="confirm-btn" id="e-btn-1" onclick="setMnaE(1)">1点<br><span style="font-size:10px;">中等度</span></button>
+              <button class="confirm-btn sel" id="e-btn-2" onclick="setMnaE(2)">2点<br><span style="font-size:10px;">問題なし</span></button>
+            </div>
+          </div>
+        </div>
+        <!-- F: BMI -->
+        <div class="mna-q">
+          <div class="mna-q-text"><strong style="color:#1a5fa8;">F.</strong>　BMI（開始画面の身長・体重より自動計算）</div>
+          <div class="auto-box" style="margin:0;border-radius:10px;">
+            <div class="auto-item" style="border-bottom:none;padding:0;">
+              <span class="auto-label" style="font-size:13px;">自動計算値</span>
+              <span class="auto-val" id="mna-f-auto">---</span>
+            </div>
+          </div>
+        </div>
+        <!-- 合計スコア -->
+        <div id="mna-total-badge" class="mna-score-badge" style="background:#f0fff4;color:#1a8a50;margin-top:16px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">MNA®-SF 合計スコア</div>
+          <div style="font-size:32px;font-weight:800;" id="mna-score">---</div>
+          <div style="font-size:14px;font-weight:700;margin-top:4px;" id="mna-judge-text">計算中</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="go('scr-oneleg')">← 片足立ちへ</button><button class="btn-complete" onclick="showSummary()">測定完了・結果を確認 ✓</button></div>
+  </div>
+
+  <!-- サマリー -->
+  <div class="screen" id="p2-summary">
+    <div class="summary-card">
+      <div class="summary-title">スタッフ測定　結果サマリー</div>
+      <div class="summary-sub" id="sum-sub">性別基準値適用済み</div>
+      <div id="sum-body"></div>
+      <button class="btn-report" onclick="goToReport()">フレイル判定・診断レポートへ →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Phase 3 screens
+       ============================================================ -->
+  <!-- P3 NAME -->
+  <div class="screen rpt-screen" id="p3-name" style="max-width:860px;">
+    <div class="card">
+      <div style="font-size:36px;text-align:center;margin-bottom:8px;">📋</div>
+      <div style="font-size:18px;font-weight:700;color:#1a3a5c;text-align:center;margin-bottom:3px;">レポート発行</div>
+      <div style="font-size:12px;color:#7a9ab8;text-align:center;margin-bottom:18px;">氏名・担当者・次回予定日を入力してください</div>
+      <span class="fl">受診者氏名</span><input class="fi" id="pt-name" placeholder="山田　太郎">
+      <span class="fl">担当者氏名</span><input class="fi" id="pt-staff" placeholder="村上　公英">
+      <span class="fl">次回検診予定日 <span style="font-size:11px;font-weight:400;color:#8aaac0;">（任意）</span></span>
+      <input class="fi" id="next-date" placeholder="2026年10月1日" style="margin-bottom:14px;">
+      <button class="btn-go" onclick="p3BuildReport()">レポートを発行する →</button>
+    </div>
+  </div>
+
+  <!-- P3 REPORT -->
+  <div class="screen rpt-screen" id="p3-report" style="max-width:860px;">
+    <div class="tabs">
+      <button class="tab on" onclick="showTab('t-rep',this)">📄 個人レポート</button>
+      <button class="tab"    onclick="showTab('t-kpi',this)">📊 KPI・集団分析</button>
+    </div>
+    <div id="t-rep">
+      <div class="acts">
+        <button class="act a-pr" onclick="window.print()">🖨️ 印刷</button>
+        <button class="act a-pd" onclick="alert('PDF：Claude Code実装時に対応予定')">📄 PDF</button>
+        <button class="act a-cs" onclick="exportCsv('normal')">📥 CSV</button>
+      </div>
+      <div id="rep">
+        <div class="rh">
+          <div><div class="rh-s">釧路孝仁会記念病院　高度健診センター</div><div class="rh-t">フレイル検診 結果レポート</div></div>
+          <div class="rh-r" id="rmeta"></div>
+        </div>
+        <div class="vband"><div class="vbar" id="vbar"></div>
+          <div class="vmain">
+            <div style="flex:1;min-width:160px;">
+              <div class="vls">フレイル判定（J-CHS）</div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span id="jchs-sc" style="font-size:14px;font-weight:700;color:#1a3a5c;"></span>
+                <div class="vt" id="vt" style="font-size:20px;">---</div>
+              </div>
+              <div class="vd" id="vd"></div>
+            </div>
+            <div class="vcrit">
+              <span><strong>健常</strong>：0項目</span>
+              <span><strong>プレフレイル</strong>：1〜2項目</span>
+              <span><strong>フレイル</strong>：3項目以上</span>
+              <div style="width:100%;font-size:9px;color:#aac0d0;">日本版フレイル基準（J-CHS）5項目該当数</div>
+            </div>
+          </div>
+        </div>
+        <div class="jrow" id="jrow"></div>
+        <div class="ctog">
+          <span class="ctog-l">経時変化の比較：</span>
+          <button class="tbtn" id="cbtn" onclick="toggleCmp()">比較OFF</button>
+          <span style="color:#9a7a5a;font-size:10px;margin-left:6px;" id="cmp-label"></span>
+        </div>
+        <div class="charts">
+          <div class="cc">
+            <div class="cc-t">① 身体機能チャート</div>
+            <div class="cc-s">測定値より算出（6軸）</div>
+            <canvas id="chart-phys" height="190"></canvas>
+            <div class="leg" id="lp"></div>
+          </div>
+          <div class="cc">
+            <div class="cc-t">② 生活機能チャート</div>
+            <div class="cc-s">基本チェックリストより算出（7軸）</div>
+            <canvas id="chart-life" height="180"></canvas>
+            <div class="leg" id="ll"></div>
+          </div>
+        </div>
+        <div class="score-box" id="score-box"></div>
+        <div class="srow" id="srow" style="display:none;"></div>
+        <div class="sh">測定値一覧</div>
+        <table class="mt" id="mt"></table>
+        <div class="mnas" id="mnas" style="display:none;"></div>
+        <div class="adv" id="adv"></div>
+        <div class="crs" id="crs"></div>
+        <div class="line-info">
+          <div class="line-info-icon">📱</div>
+          <div class="line-info-text">
+            <strong style="color:#06c755;">公式LINE・お電話でご予約・お問い合わせ</strong><br>
+            ☎ <strong>0120-133-527</strong>　または公式LINEアカウントへ<br>
+          </div>
+        </div>
+        <div class="nx"><div class="nxl">次回検診予定日</div><div class="nxv" id="nxv">未定</div></div>
+        <div class="rf">
+          <div class="rf-l">釧路孝仁会記念病院　高度健診センター</div>
+          <div class="rf-r">© 2026 154 Re-Life Design. All rights reserved.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIタブ -->
+    <div id="t-kpi" style="display:none;">
+      <div class="kc">
+        <div class="kt">📊 受診状況</div>
+        <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px;">
+          <div class="ki"><div class="ki-l">累計受診者数</div><div class="ki-v">52<span class="ki-u">名</span></div><div class="ki-n">男性18名 / 女性34名</div></div>
+          <div class="ki"><div class="ki-l">平均年齢</div><div class="ki-v">74.2<span class="ki-u">歳</span></div><div class="ki-n">範囲：58〜89歳</div></div>
+          <div class="ki"><div class="ki-l">集計期間</div><div class="ki-v" style="font-size:14px;">6ヶ月</div><div class="ki-n">2025.10〜2026.4</div></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#1a3a5c;margin-bottom:8px;">フレイル判定割合（初回検診時）</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="flex:1;background:#fff0f0;border-radius:10px;padding:10px 12px;border-left:4px solid #e03030;text-align:center;">
+            <div style="font-size:10px;color:#e03030;font-weight:700;margin-bottom:3px;">🚩 フレイル</div>
+            <div style="font-size:24px;font-weight:800;color:#e03030;">20<span style="font-size:12px;">名</span></div>
+            <div style="font-size:12px;color:#e03030;font-weight:600;">38%</div>
+          </div>
+          <div style="flex:1;background:#fff8f0;border-radius:10px;padding:10px 12px;border-left:4px solid #e08030;text-align:center;">
+            <div style="font-size:10px;color:#e08030;font-weight:700;margin-bottom:3px;">⚠️ プレフレイル</div>
+            <div style="font-size:24px;font-weight:800;color:#e08030;">23<span style="font-size:12px;">名</span></div>
+            <div style="font-size:12px;color:#e08030;font-weight:600;">44%</div>
+          </div>
+          <div style="flex:1;background:#f0fff4;border-radius:10px;padding:10px 12px;border-left:4px solid #1a8a50;text-align:center;">
+            <div style="font-size:10px;color:#1a8a50;font-weight:700;margin-bottom:3px;">✓ 健常</div>
+            <div style="font-size:24px;font-weight:800;color:#1a8a50;">9<span style="font-size:12px;">名</span></div>
+            <div style="font-size:12px;color:#1a8a50;font-weight:600;">18%</div>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">弱点項目ランキング（基準値未満の該当率）</div>
+        <div class="kbw"><div class="kbl"><span>嚥下機能リスク</span><span style="font-weight:700;color:#e03030;">68%</span></div><div class="kbb"><div class="kbf" style="width:68%;background:#e03030;"></div></div></div>
+        <div class="kbw"><div class="kbl"><span>移動・バランス機能リスク</span><span style="font-weight:700;color:#e08030;">58%</span></div><div class="kbb"><div class="kbf" style="width:58%;background:#e08030;"></div></div></div>
+        <div class="kbw"><div class="kbl"><span>外出・交流機能低下率</span><span style="font-weight:700;color:#e08030;">49%</span></div><div class="kbb"><div class="kbf" style="width:49%;background:#e08030;"></div></div></div>
+        <div class="kbw"><div class="kbl"><span>筋力低下率</span><span style="font-weight:700;color:#1a5fa8;">42%</span></div><div class="kbb"><div class="kbf" style="width:42%;background:#1a3a6a;"></div></div></div>
+        <div class="kbw"><div class="kbl"><span>低栄養リスク率</span><span style="font-weight:700;color:#1a5fa8;">38%</span></div><div class="kbb"><div class="kbf" style="width:38%;background:#1a3a6a;"></div></div></div>
+        <div class="kbw"><div class="kbl"><span>気力・こころ低下率</span><span style="font-weight:700;color:#1a5fa8;">35%</span></div><div class="kbb"><div class="kbf" style="width:35%;background:#1a3a6a;"></div></div></div>
+        <div style="font-size:10px;color:#9abacc;margin-top:4px;">※デモデータ。実データ蓄積後に更新されます。</div>
+      </div>
+      <div class="kc">
+        <div class="kt">🏆 プログラム参加・介入成果</div>
+        <div style="font-size:10px;color:#7a9ab8;margin-bottom:10px;">※フレイル改善率：フレイルまたはプレフレイル判定だった方が1段階以上改善した割合</div>
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <div style="flex:1;background:#f5f8ff;border-radius:10px;padding:12px 14px;border:1.5px solid #d0e0f0;">
+            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e0e8f0;">コース②　3ヶ月</div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">参加者数</div>
+            <div style="font-size:20px;font-weight:800;color:#1a3a6a;margin-bottom:2px;">19<span style="font-size:11px;color:#9abacc;"> 名</span><span style="font-size:12px;color:#7a9ab8;font-weight:600;margin-left:6px;">（37%）</span></div>
+            <div style="font-size:10px;color:#9abacc;margin-bottom:6px;">累計受診者52名中</div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">フレイル改善率</div>
+            <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap;">
+              <span style="background:#d0f0da;color:#1a8a50;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">改善 55%</span>
+              <span style="background:#d0e4ff;color:#1a5fa8;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">維持 36%</span>
+              <span style="background:#ffe0d8;color:#e03030;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">悪化 9%</span>
+            </div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:2px;">継続率（80%以上出席）</div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+              <span style="color:#1a8a50;">88<span style="font-size:12px;">%</span></span>
+              <span style="background:#d0f0da;color:#1a8a50;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">✓ 達成</span>
+            </div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:2px;">身体機能スコア変化</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:1px;"><span style="color:#7a9ab8;">初回 12.4点</span> → <span style="color:#1a3a6a;">14.8点</span> <span style="background:#d0f0da;color:#1a8a50;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;">改善</span></div>
+            <div style="font-size:11px;color:#5a7a9a;margin:5px 0 1px;">生活機能スコア変化</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;"><span style="color:#7a9ab8;">初回 7.2点</span> → <span style="color:#1a3a6a;">6.1点</span> <span style="background:#d0f0da;color:#1a8a50;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;">改善</span></div>
+          </div>
+          <div style="flex:1;background:#fff8f0;border-radius:10px;padding:12px 14px;border:1.5px solid #f0d0a0;">
+            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #f0dcc8;">コース③　フレイル予防プログラム（6ヵ月）</div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">参加者数</div>
+            <div style="font-size:20px;font-weight:800;color:#1a3a6a;margin-bottom:2px;">18<span style="font-size:11px;color:#9abacc;"> 名</span><span style="font-size:12px;color:#7a9ab8;font-weight:600;margin-left:6px;">（35%）</span></div>
+            <div style="font-size:10px;color:#9abacc;margin-bottom:6px;">累計受診者52名中</div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">フレイル改善率</div>
+            <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap;">
+              <span style="background:#d0f0da;color:#1a8a50;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">改善 62%</span>
+              <span style="background:#d0e4ff;color:#1a5fa8;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">維持 31%</span>
+              <span style="background:#ffe0d8;color:#e03030;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:700;">悪化 7%</span>
+            </div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:2px;">継続率（80%以上出席）</div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+              <span style="color:#1a8a50;">92<span style="font-size:12px;">%</span></span>
+              <span style="background:#d0f0da;color:#1a8a50;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;">✓ 達成</span>
+            </div>
+            <div style="font-size:11px;color:#5a7a9a;margin-bottom:2px;">身体機能スコア変化</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:1px;"><span style="color:#7a9ab8;">初回 9.8点</span> → <span style="color:#1a3a6a;">14.2点</span> <span style="background:#d0f0da;color:#1a8a50;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;">改善</span></div>
+            <div style="font-size:11px;color:#5a7a9a;margin:5px 0 1px;">生活機能スコア変化</div>
+            <div style="font-size:13px;font-weight:700;"><span style="color:#7a9ab8;">初回 11.3点</span> → <span style="color:#1a3a6a;">8.4点</span> <span style="background:#d0f0da;color:#1a8a50;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;">改善</span></div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:#9abacc;">※身体・生活スコア変化：初回評価の平均値との比較。±2点以上で「改善」バッジ。継続率80%未満は赤「要確認」。デモデータ。</div>
+      </div>
+      <div class="kc">
+        <div class="kt">🏢 プログラム参加による介入効果（行政・経営層向け）</div>
+        <div style="background:#f0f7ff;border-left:4px solid #1a3a6a;padding:14px 16px;border-radius:0 8px 8px 0;font-size:11px;color:#2a3a6a;line-height:2.0;margin-bottom:12px;">
+          対象期間：2025年10月〜2026年4月&#x3000;対象：37名（コース②③参加者）<br>
+          フレイル改善率：<strong>62%</strong>（フレイル/プレフレイルから1段階以上改善）<br>
+          プログラム継続率：<strong>90%</strong>（80%以上出席で完遂）<br>
+          推定介護給付費抑制効果（年間推計）：<strong style="color:#1a3a6a;font-size:13px;">約1,240万円／年</strong><br>
+          <span style="font-size:9px;color:#7a9ab8;">※厚生労働省の地域別平均介護給付費に基づき試算。フレイルから健常への改善14名分を算出。</span>
+          <div style="margin-top:8px;padding:8px 10px;background:#e8f0ff;border-radius:6px;font-size:10px;color:#3a5a8a;">
+            本事業は理学療法士が主導する専門プログラムです。フレイルからの「改善」を通じて、将来的な介護費・医療費の増大を未然に防ぐ<strong>投資対効果の高い取り組み</strong>です。
+          </div>
+        </div>
+        <div style="font-size:10px;color:#9abacc;margin-bottom:8px;">📥 詳細データはCSV出力でExcelに書き出せます。</div>
+        <button class="bex bex-c" onclick="exportCsv('normal')">📥 通常CSV（院内管理用）</button>
+        <button class="bex bex-r" onclick="exportCsv('research')">🔬 学術用CSV（同意者・匿名化）</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Footer -->
+  <div style="width:100%;max-width:860px;text-align:center;padding:16px 20px 24px;font-size:10px;color:#9abacc;">
+    © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT
+  </div>
+
+</div>
+
+<script>
+/* © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT */
+
+// ============================================================
+// Global screen navigation
+// ============================================================
+const progMap = {
+  'p1-start':0, 'p1-question':0, 'p1-complete':40,
+  'p2-start':5, 'scr-grip':18, 'scr-calf':30, 'scr-walk':42,
+  'scr-standup':54, 'scr-oneleg':64, 'scr-rsst':76, 'scr-mna':88, 'p2-summary':96,
+  'p3-name':98, 'p3-report':100
+};
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const p = progMap[id];
+  if (p !== undefined) document.getElementById('prog').style.width = p + '%';
+  // Phase 2: trigger MNA init when navigating to MNA screen
+  if (id === 'scr-mna') initMnaScreen();
+}
+
+// ============================================================
+// Phase 1: Basic Checklist (24 questions)
+// ============================================================
+const QS = [
+  { cat:"運動・移動", icon:"🚌", e:"🚌", t:"バスや電車で一人で外出していますか",              h:"週1回以上、一人で公共交通機関を使って外出している場合は「はい」。",             r:false },
+  { cat:"運動・移動", icon:"🛒", e:"🛒", t:"日用品の買い物をしていますか",                    h:"自分で食料品や日用品を買い物できる場合は「はい」。",                           r:false },
+  { cat:"運動・移動", icon:"🏦", e:"🏦", t:"預貯金の出し入れをしていますか",                  h:"自分で銀行・郵便局などで預金の出し入れができる場合は「はい」。",               r:false },
+  { cat:"運動・移動", icon:"👥", e:"👥", t:"友人の家を訪ねることがありますか",                h:"友人や知人の家に月1回以上遊びに行くことがある場合は「はい」。",                 r:false },
+  { cat:"運動・移動", icon:"🤝", e:"🤝", t:"家族や友人の相談にのっていますか",                h:"家族や友人から悩み相談を受けたりアドバイスをすることがある場合は「はい」。",     r:false },
+  { cat:"転倒リスク", icon:"🪜", e:"🪜", t:"階段を手すりや壁をつたわらずに昇っていますか",   h:"手すりや壁を使わずに普通に階段を昇り降りできる場合は「はい」。",               r:false },
+  { cat:"転倒リスク", icon:"🪑", e:"🪑", t:"椅子から何もつかまらずに立ち上がれますか",       h:"テーブルや手すりなどを使わずに椅子から立ち上がれる場合は「はい」。",           r:false },
+  { cat:"転倒リスク", icon:"🚶", e:"🚶", t:"15分位続けて歩いていますか",                      h:"15分以上続けて歩くことができる場合は「はい」。",                               r:false },
+  { cat:"転倒リスク", icon:"😰", e:"😰", t:"この1年間に転んだことがありますか",               h:"過去1年間に転倒したことがある場合は「はい」。",                               r:true  },
+  { cat:"転倒リスク", icon:"😟", e:"😟", t:"転倒に対する不安は大きいですか",                  h:"転んでしまうことに対して不安を感じている場合は「はい」。",                     r:true  },
+  { cat:"栄養・体重", icon:"⚖️", e:"⚖️", t:"6ヶ月間で2〜3kg以上の体重減少がありましたか",   h:"ダイエット以外の理由で過去6ヶ月に体重が2〜3kg以上減った場合は「はい」。",       r:true  },
+  { cat:"口腔・嚥下", icon:"🦷", e:"🦷", t:"半年前に比べて固いものが食べにくくなりましたか", h:"以前より硬い食べ物（肉など）が食べにくくなった場合は「はい」。",               r:true  },
+  { cat:"口腔・嚥下", icon:"🍵", e:"🍵", t:"お茶や汁物等でむせることがありますか",            h:"お茶・みそ汁・水などを飲むときにむせることがある場合は「はい」。",             r:true  },
+  { cat:"口腔・嚥下", icon:"😐", e:"😐", t:"口の渇きが気になりますか",                        h:"口の中が乾燥する・口が渇くと感じることが多い場合は「はい」。",                 r:true  },
+  { cat:"閉じこもり", icon:"🚪", e:"🚪", t:"週に1回以上は外出していますか",                   h:"週に1回以上外に出かけている場合は「はい」。",                                 r:false },
+  { cat:"閉じこもり", icon:"🏠", e:"🏠", t:"昨年と比べて外出の回数が減っていますか",          h:"1年前と比べて外出する回数が明らかに減った場合は「はい」。",                   r:true  },
+  { cat:"認知機能",   icon:"🧩", e:"🧩", t:"「いつも同じ事を聞く」などの物忘れがあると言われますか", h:"家族や友人から「同じことを何度も聞く」などと言われることがある場合は「はい」。", r:true },
+  { cat:"認知機能",   icon:"📱", e:"📱", t:"自分で電話番号を調べて電話をかけていますか",      h:"自分で電話番号を調べて電話をかけることができる場合は「はい」。",               r:false },
+  { cat:"認知機能",   icon:"📅", e:"📅", t:"今日が何月何日かわからないときがありますか",      h:"今日の日付（月・日）がわからなくなることがある場合は「はい」。",               r:true  },
+  { cat:"うつ・気力", icon:"😔", e:"😔", t:"（ここ2週間）毎日の生活に充実感がない",           h:"最近2週間、毎日の生活に充実感や満足感が感じられない場合は「はい」。",           r:true  },
+  { cat:"うつ・気力", icon:"😢", e:"😢", t:"（ここ2週間）楽しんでいたことが楽しめなくなった", h:"最近2週間、趣味や好きなことが楽しめなくなった場合は「はい」。",               r:true  },
+  { cat:"うつ・気力", icon:"😓", e:"😓", t:"（ここ2週間）以前楽にできていたことがおっくうに感じられる", h:"最近2週間、以前は簡単にできていたことが面倒に感じる場合は「はい」。", r:true },
+  { cat:"うつ・気力", icon:"😕", e:"😕", t:"（ここ2週間）自分が役に立つ人間だと思えない",    h:"最近2週間、自分は役に立てていない・必要とされていないと感じる場合は「はい」。", r:true },
+  { cat:"うつ・気力", icon:"😞", e:"😞", t:"（ここ2週間）わけもなく疲れたような感じがする",  h:"最近2週間、特に理由もないのに疲れた感じがする場合は「はい」。",               r:true  },
+];
+
+let p1Cur = 0, p1Answers = new Array(QS.length).fill(null), p1Pid = "", p1BmiValue = null, p1HtVal = 160, p1WtVal = 55;
+
+function p1GuardMin(id, minVal) {
+  const el = document.getElementById(id);
+  const v = parseFloat(el.value);
+  if (!isNaN(v) && v < minVal) el.value = minVal;
+}
+
+function p1CalcBmi() {
+  const h = parseFloat(document.getElementById('p1-ht').value);
+  const w = parseFloat(document.getElementById('p1-wt').value);
+  const valEl = document.getElementById('p1-bmi-val');
+  const catEl = document.getElementById('p1-bmi-cat');
+  const badge = document.getElementById('p1-bmi-badge');
+  if (h >= 100 && w >= 20) {
+    const b = w / ((h / 100) * (h / 100));
+    p1BmiValue = b; p1HtVal = h; p1WtVal = w;
+    valEl.textContent = b.toFixed(1);
+    let label, color, bg;
+    if      (b < 18.5) { label = "低体重（やせ）"; color = "#e03030"; bg = "#fff0f0"; }
+    else if (b < 25.0) { label = "普通体重";       color = "#1a8a50"; bg = "#f0fff4"; }
+    else if (b < 30.0) { label = "肥満（1度）";    color = "#e08030"; bg = "#fff8f0"; }
+    else               { label = "肥満（2度以上）"; color = "#c03030"; bg = "#fff0f0"; }
+    valEl.style.color = color; catEl.style.color = color;
+    catEl.textContent = label; badge.style.background = bg;
+  } else {
+    p1BmiValue = null;
+    valEl.textContent = "---"; valEl.style.color = "#9abacc";
+    catEl.textContent = ""; badge.style.background = "#e8f0fb";
+  }
+}
+
+function p1StartCheck() {
+  p1Pid = document.getElementById('p1-pid').value.trim();
+  if (!p1Pid) { alert('受診者番号を入力してください'); return; }
+  document.getElementById('hdr-id').textContent = '受診者：' + p1Pid;
+  document.getElementById('hdr-sub').textContent = '問診パート（基本チェックリスト）';
+  go('p1-question');
+  p1ShowQ(0);
+}
+
+function p1ShowQ(idx) {
+  const q = QS[idx];
+  document.getElementById('q-cat-icon').textContent = q.icon;
+  document.getElementById('q-cat-name').textContent = q.cat;
+  document.getElementById('q-num').textContent = (idx + 1) + ' / ' + QS.length;
+  document.getElementById('q-illust').textContent = q.e;
+  document.getElementById('q-text').textContent = q.t;
+  document.getElementById('q-hint').textContent = q.h;
+  document.getElementById('prog').style.width = Math.round((idx / QS.length) * 40) + '%';
+  document.getElementById('q-ctr').textContent = '回答済み: ' + p1Answers.filter(a => a !== null).length + '問';
+}
+
+function p1Answer(isNo) {
+  p1Answers[p1Cur] = isNo;
+  p1Cur++;
+  if (p1Cur >= QS.length) p1ShowComplete();
+  else p1ShowQ(p1Cur);
+}
+
+function p1GoBack() {
+  if (p1Cur === 0) { go('p1-start'); return; }
+  p1Cur--;
+  p1ShowQ(p1Cur);
+}
+
+function p1ShowComplete() {
+  go('p1-complete');
+  document.getElementById('prog').style.width = '40%';
+  document.getElementById('hdr-sub').textContent = '問診完了 → スタッフ測定へ';
+
+  const cats = {};
+  QS.forEach((q, i) => {
+    if (!cats[q.cat]) cats[q.cat] = { risk: 0, total: 0 };
+    cats[q.cat].total++;
+    const isRisk = q.r ? (p1Answers[i] === false) : (p1Answers[i] === true);
+    if (isRisk) cats[q.cat].risk++;
+  });
+  if (!cats['栄養・体重']) cats['栄養・体重'] = { risk: 0, total: 0 };
+  cats['栄養・体重'].total += 1;
+  if (p1BmiValue !== null && p1BmiValue < 18.5) cats['栄養・体重'].risk += 1;
+
+  let totalRisk = 0;
+  let html = '';
+  for (const [cat, v] of Object.entries(cats)) {
+    const isRisk = v.risk > 0;
+    if (isRisk) totalRisk += v.risk;
+    html += `<div class="result-row"><span class="result-label">${cat}</span><span class="result-val ${isRisk ? 'badge-risk' : 'badge-ok'}">${isRisk ? '⚠️' : '✓'} ${v.risk}/${v.total}項目</span></div>`;
+  }
+  if (p1BmiValue !== null) {
+    html += `<div class="result-row"><span class="result-label">BMI（参考）</span><span class="result-val" style="color:${p1BmiValue < 18.5 ? '#e03030' : '#1a8a50'}">${p1BmiValue.toFixed(1)}　${p1BmiValue < 18.5 ? '⚠️ 低体重' : '✓ 正常範囲以上'}</span></div>`;
+  }
+  html += `<div class="result-row" style="border-bottom:none;margin-top:6px;padding-top:14px;border-top:2px solid #e0e8f0;"><span class="result-label" style="font-weight:700;font-size:16px;">リスク項目 合計</span><span class="result-val" style="font-size:22px;color:${totalRisk >= 8 ? '#e03030' : totalRisk >= 4 ? '#e08030' : '#1a8a50'}">${totalRisk} 項目</span></div>`;
+  document.getElementById('result-summary').innerHTML = html;
+}
+
+// Phase 1 → Phase 2 transition
+function goToPhase2() {
+  // Save Phase 1 data to localStorage
+  const p1Data = {
+    pid: p1Pid,
+    ht: p1HtVal,
+    wt: p1WtVal,
+    bmi: p1BmiValue,
+    answers: p1Answers.slice() // 24 booleans
+  };
+  localStorage.setItem('frail_phase1', JSON.stringify(p1Data));
+
+  // Pre-fill Phase 2 fields
+  document.getElementById('p2-pid').value = p1Pid;
+  document.getElementById('p2-ht').value = p1HtVal.toFixed ? p1HtVal.toFixed(1) : p1HtVal;
+  document.getElementById('p2-wt').value = p1WtVal.toFixed ? p1WtVal.toFixed(1) : p1WtVal;
+  p2CalcBmi();
+
+  document.getElementById('hdr-sub').textContent = '受診者情報入力';
+  go('p2-start');
+}
+
+// ============================================================
+// Phase 2: Staff Measurements
+// ============================================================
+let spinT=null, spinI=null, gender='', p2BmiValue=21.5, p2AgeValue=70;
+let consentValue=null, consentDate=null;
+
+function setConsent(v) {
+  consentValue=v; consentDate=new Date().toISOString();
+  document.getElementById('consent-yes').style.borderColor=v===true?'#1a8a50':'#d0e0f0';
+  document.getElementById('consent-yes').style.background=v===true?'#f0fff4':'white';
+  document.getElementById('consent-yes').style.color=v===true?'#1a8a50':'#5a7a9a';
+  document.getElementById('consent-yes').textContent=v===true?'☑　同意する':'☐　同意する';
+  document.getElementById('consent-no').style.borderColor=v===false?'#e08030':'#d0e0f0';
+  document.getElementById('consent-no').style.background=v===false?'#fff8f0':'white';
+  document.getElementById('consent-no').style.color=v===false?'#e08030':'#5a7a9a';
+  document.getElementById('consent-no').textContent=v===false?'☑　同意しない':'☐　同意しない';
+}
+
+const mnaS={a:2,b:3,c:2,d:2,e:2,f:2};
+const skipFlags={grip:false,calf:false,walk:false,standup:false,rsst:false,oneleg:false};
+
+// Get real CL data from Phase 1 (localStorage) or fallback to demo
+function getRealCL() {
+  try {
+    const raw = localStorage.getItem('frail_phase1');
+    if (raw) {
+      const p1 = JSON.parse(raw);
+      if (p1.answers && p1.answers.length === 24) {
+        // Convert answers to the risk-boolean format used by Phase 3
+        // answers[i] = true means "いいえ" was selected
+        // For CL: we need risk flags per question
+        const cl = [];
+        for (let i = 0; i < 24; i++) {
+          const isRisk = QS[i].r ? (p1.answers[i] === false) : (p1.answers[i] === true);
+          cl.push(isRisk);
+        }
+        return {
+          cl: cl,
+          q6: p1.answers[5], // raw answer for Q6 (false=はい, true=いいえ)
+          q7: p1.answers[6],
+          q8: p1.answers[7],
+          cog: [
+            QS[16].r ? (p1.answers[16] === false) : (p1.answers[16] === true),
+            QS[17].r ? (p1.answers[17] === false) : (p1.answers[17] === true),
+            QS[18].r ? (p1.answers[18] === false) : (p1.answers[18] === true)
+          ],
+          dep: [
+            QS[19].r ? (p1.answers[19] === false) : (p1.answers[19] === true),
+            QS[20].r ? (p1.answers[20] === false) : (p1.answers[20] === true),
+            QS[21].r ? (p1.answers[21] === false) : (p1.answers[21] === true),
+            QS[22].r ? (p1.answers[22] === false) : (p1.answers[22] === true),
+            QS[23].r ? (p1.answers[23] === false) : (p1.answers[23] === true)
+          ]
+        };
+      }
+    }
+  } catch(e) {}
+  // Fallback demo data
+  return {
+    cl: null,
+    q6:false, q7:false, q8:false,
+    cog:[false,true,false],
+    dep:[false,true,false,false,false]
+  };
+}
+
+function getV(id){ return parseFloat(document.getElementById(id).value)||0; }
+function setV(id,val,mn,mx,dec){
+  val=Math.round(val*Math.pow(10,dec))/Math.pow(10,dec);
+  if(val<mn)val=mn; if(val>mx)val=mx;
+  document.getElementById(id).value=dec>0?val.toFixed(dec):String(val);
+}
+function ss(id,step,dir,mn,mx,dec,cb){
+  const doStep=()=>{ setV(id,getV(id)+step*dir,mn,mx,dec); if(cb)window[cb](); };
+  doStep(); spinT=setTimeout(()=>{ spinI=setInterval(doStep,80); },400);
+}
+function stopS(){ clearTimeout(spinT); clearInterval(spinI); }
+function onNI(id,mn,mx,dec){
+  const v=parseFloat(document.getElementById(id).value);
+  if(!isNaN(v)){ if(v<mn)document.getElementById(id).value=dec>0?mn.toFixed(dec):String(mn); if(v>mx)document.getElementById(id).value=dec>0?mx.toFixed(dec):String(mx); }
+}
+function jW(ok,okT,ngT){ return `<div class="judge-wrap ${ok?'ok-bg':'ng-bg'}">${ok?'✓':'⚠️'}　${ok?okT:ngT}</div>`; }
+
+function gripCutoff(){
+  const age=p2AgeValue, f=gender==='female';
+  if(age>=50&&age<=64)return f?20:34;
+  return f?18:28;
+}
+function gripCutLabel(){
+  const age=p2AgeValue, f=gender==='female';
+  if(age>=50&&age<=64)return f?'20kg（AWGS 50〜64歳・女性）':'34kg（AWGS 50〜64歳・男性）';
+  return f?'18kg（AWGS 65歳以上・女性）':'28kg（AWGS 65歳以上・男性）';
+}
+
+function toggleSkip(key){
+  skipFlags[key]=!skipFlags[key];
+  const skip=skipFlags[key];
+  const btn=document.getElementById(key+'-skip-btn');
+  if(btn){btn.textContent=skip?'✓ 測定困難':'測定困難';btn.style.background=skip?'#e08030':'white';btn.style.color=skip?'white':'#7a9ab8';btn.style.borderColor=skip?'#e08030':'#c0d0e0';}
+  const disableIds={grip:['grip-r','grip-l'],calf:['calf-r','calf-l'],walk:['walk-sec'],standup:['standup-sec'],rsst:['rsst-cnt'],oneleg:['oneleg-sec']};
+  if(disableIds[key]){ disableIds[key].forEach(id=>{ const el=document.getElementById(id); if(el){el.disabled=skip;el.style.opacity=skip?'0.4':'1';} }); }
+  const judgeEl=document.getElementById(key+'-judge');
+  if(judgeEl&&skip)judgeEl.outerHTML=`<div id="${key}-judge" class="judge-wrap" style="background:#f0f4f8;color:#7a9ab8;">— 測定困難のため除外</div>`;
+  else if(!skip){
+    if(key==='grip')judgeGrip(); else if(key==='calf')judgeCalf(); else if(key==='walk')calcWalk();
+    else if(key==='standup')judgeStandup(); else if(key==='rsst')judgeRsst(); else if(key==='oneleg')judgeOneLeg();
+  }
+}
+
+function setGender(g){
+  gender=g;
+  document.getElementById('btn-male').className='gender-btn'+(g==='male'?' sel-m':'');
+  document.getElementById('btn-female').className='gender-btn'+(g==='female'?' sel-f':'');
+}
+
+function p2CalcBmi(){
+  const h=parseFloat(document.getElementById('p2-ht').value), w=parseFloat(document.getElementById('p2-wt').value);
+  const ve=document.getElementById('p2-bmi-val'), ce=document.getElementById('p2-bmi-cat'), b=document.getElementById('p2-bmi-badge');
+  if(h>=100&&w>=20){
+    const bmi=w/((h/100)*(h/100)); p2BmiValue=bmi;
+    ve.textContent=bmi.toFixed(1);
+    let lb,col,bg;
+    if(bmi<18.5){lb='低体重（やせ）';col='#e03030';bg='#fff0f0';}
+    else if(bmi<25){lb='普通体重';col='#1a8a50';bg='#f0fff4';}
+    else if(bmi<30){lb='肥満（1度）';col='#e08030';bg='#fff8f0';}
+    else{lb='肥満（2度以上）';col='#c03030';bg='#fff0f0';}
+    ve.style.color=col;ce.style.color=col;ce.textContent=lb;b.style.background=bg;
+  }
+}
+
+// Stopwatch
+const swState={walk:{interval:null,ms:0},standup:{interval:null,ms:0}};
+function startSW(key){
+  if(swState[key].interval)return;
+  swState[key].ms=0;
+  document.getElementById(key+'-start-btn').style.display='none';
+  document.getElementById(key+'-stop-btn').style.display='inline-block';
+  beep(880,0.15,0.5);
+  swState[key].interval=setInterval(()=>{
+    swState[key].ms+=100;
+    const sec=(swState[key].ms/1000).toFixed(1);
+    document.getElementById(key+'-sw-display').textContent=sec;
+    document.getElementById(key+'-sw-display').style.color='#1a5fa8';
+  },100);
+}
+function stopSW(key){
+  if(!swState[key].interval)return;
+  clearInterval(swState[key].interval); swState[key].interval=null;
+  beepEnd();
+  const sec=(swState[key].ms/1000).toFixed(1);
+  document.getElementById(key+'-sw-display').style.color='#1a8a50';
+  document.getElementById(key+'-stop-btn').style.display='none';
+  const startBtn=document.getElementById(key+'-start-btn');
+  startBtn.textContent='▶ 再計測'; startBtn.style.display='inline-block';
+  document.getElementById(key+'-sec').value=sec;
+  if(key==='walk')calcWalk();
+  if(key==='standup')judgeStandup();
+}
+
+function startMeas(){
+  const pid=document.getElementById('p2-pid').value.trim();
+  if(!pid){alert('受診者番号を入力してください');return;}
+  if(!gender){alert('性別を選択してください');return;}
+  if(consentValue===null){alert('研究同意の選択をお願いします');return;}
+  p2AgeValue=parseInt(document.getElementById('p2-age').value)||70;
+  const cut=gripCutoff(), lbl=gripCutLabel();
+  document.getElementById('hdr-id').textContent=(gender==='male'?'♂':'♀')+' '+pid;
+  document.getElementById('hdr-sub').textContent='スタッフ測定パート';
+  const stdEl=document.getElementById('grip-std-text');
+  if(stdEl)stdEl.textContent=`基準値：${lbl}`;
+  go('scr-grip'); judgeGrip(); judgeCalf();
+}
+
+function judgeGrip(){
+  if(skipFlags.grip)return;
+  const r=getV('grip-r'),l=getV('grip-l'),mx=Math.max(r,l);
+  document.getElementById('grip-max').textContent=mx.toFixed(1)+' kg';
+  const cut=gripCutoff();
+  document.getElementById('grip-judge').outerHTML=`<div id="grip-judge">${jW(mx>=cut,'基準値以上','基準値未満')}</div>`;
+}
+function judgeCalf(){
+  if(skipFlags.calf)return;
+  const r=getV('calf-r'),l=getV('calf-l'),mx=Math.max(r,l);
+  document.getElementById('calf-max').textContent=mx.toFixed(1)+' cm';
+  const cut=gender==='female'?33:34;
+  document.getElementById('calf-judge').outerHTML=`<div id="calf-judge">${jW(mx>=cut,'基準値以上','基準値未満')}</div>`;
+}
+function calcWalk(){
+  if(skipFlags.walk)return;
+  const sec=getV('walk-sec'),sp=sec>0?4/sec:0;
+  document.getElementById('walk-speed').textContent=sp.toFixed(2)+' m/s';
+  document.getElementById('walk-judge').outerHTML=`<div id="walk-judge">${jW(sp>=1.0,'基準値以上','基準値未満')}</div>`;
+}
+function judgeStandup(){
+  if(skipFlags.standup)return;
+  const sec=getV('standup-sec');
+  document.getElementById('standup-judge').outerHTML=`<div id="standup-judge">${jW(sec<=12,'基準値以内','基準値超過')}</div>`;
+}
+function judgeRsst(){
+  if(skipFlags.rsst)return;
+  const cnt=getV('rsst-cnt');
+  document.getElementById('rsst-judge').outerHTML=`<div id="rsst-judge">${jW(cnt>=3,'基準値以上','基準値未満')}</div>`;
+}
+function judgeOneLeg(){
+  if(skipFlags.oneleg)return;
+  const sec=getV('oneleg-sec');
+  document.getElementById('oneleg-judge').outerHTML=`<div id="oneleg-judge">${jW(sec>=15,'基準値以上','基準値未満')}</div>`;
+}
+
+// RSST Timer
+let rsstInterval=null;
+function startRsstTimer(){
+  if(rsstInterval)return;
+  let rem=30;
+  const cd=document.getElementById('rsst-countdown');
+  const lbl=document.getElementById('rsst-timer-label');
+  document.getElementById('rsst-start-btn').style.display='none';
+  document.getElementById('rsst-stop-btn').style.display='inline-block';
+  beepStart();
+  lbl.textContent='計測中…嚥下のたびにカウント'; cd.style.color='#1a5fa8';
+  rsstInterval=setInterval(()=>{
+    rem--; cd.textContent=rem;
+    if(rem<=5)cd.style.color='#e03030';
+    if(rem<=0){
+      clearInterval(rsstInterval); rsstInterval=null;
+      beepEnd(); cd.textContent='✓'; cd.style.color='#1a8a50';
+      lbl.textContent='計測完了。回数を入力してください';
+      document.getElementById('rsst-stop-btn').style.display='none';
+      document.getElementById('rsst-start-btn').style.display='inline-block';
+      document.getElementById('rsst-start-btn').textContent='▶ 再計測';
+      document.getElementById('rsst-cnt').select();
+    }
+  },1000);
+}
+function stopRsstTimer(){
+  if(rsstInterval){clearInterval(rsstInterval);rsstInterval=null;}
+  document.getElementById('rsst-countdown').textContent='30';
+  document.getElementById('rsst-countdown').style.color='#1a3a5c';
+  document.getElementById('rsst-timer-label').textContent='タイマーをスタートして計測してください';
+  document.getElementById('rsst-stop-btn').style.display='none';
+  document.getElementById('rsst-start-btn').style.display='inline-block';
+  document.getElementById('rsst-start-btn').textContent='▶ 30秒スタート';
+}
+
+// Beep
+function beep(freq,dur,vol){
+  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=freq;gain.gain.value=vol||0.3;osc.start();osc.stop(ctx.currentTime+dur);setTimeout(()=>ctx.close(),dur*1000+200);}catch(e){}
+}
+function beepStart(){beep(660,0.12,0.4);setTimeout(()=>beep(770,0.12,0.4),160);setTimeout(()=>beep(880,0.18,0.5),320);}
+function beepEnd(){beep(880,0.12,0.4);setTimeout(()=>beep(660,0.2,0.5),150);}
+
+// One-leg stopwatch
+let oneLegInterval=null, oneLegMs=0;
+function startOneLeg(){
+  if(oneLegInterval)return;
+  oneLegMs=0;
+  document.getElementById('oneleg-start-btn').style.display='none';
+  document.getElementById('oneleg-stop-btn').style.display='inline-block';
+  document.getElementById('oneleg-display').style.color='#1a5fa8';
+  beep(880,0.15,0.5);
+  oneLegInterval=setInterval(()=>{
+    oneLegMs+=100;
+    document.getElementById('oneleg-display').textContent=(oneLegMs/1000).toFixed(1);
+    if(oneLegMs>=60000) stopOneLeg();
+  },100);
+}
+function stopOneLeg(){
+  if(!oneLegInterval)return;
+  clearInterval(oneLegInterval); oneLegInterval=null;
+  beepEnd();
+  document.getElementById('oneleg-display').style.color='#1a8a50';
+  document.getElementById('oneleg-start-btn').style.display='inline-block';
+  document.getElementById('oneleg-start-btn').textContent='▶ 再計測';
+  document.getElementById('oneleg-stop-btn').style.display='none';
+  document.getElementById('oneleg-sec').value=(oneLegMs/1000).toFixed(1);
+  judgeOneLeg();
+}
+
+// MNA E-score from CL data
+function calcEScore(){
+  const realCL = getRealCL();
+  const cogHit=realCL.cog.filter(Boolean).length;
+  const depHit=realCL.dep.filter(Boolean).length;
+  let score,reason;
+  if(cogHit>=3||depHit>=2){ score=0; reason=cogHit>=3?`認知${cogHit}項目（重度認知症）`:`うつ${depHit}項目（うつ状態）`; }
+  else if(cogHit>=1){ score=1; reason=`認知${cogHit}項目（中等度認知症）`; }
+  else{ score=2; reason='認知・うつ共に0項目（問題なし）'; }
+  return{score,cogHit,depHit,reason};
+}
+
+function setMnaC(v){
+  mnaS.c=v;
+  [0,1,2].forEach(i=>{const b=document.getElementById(`c-btn-${i}`);if(b)b.className='confirm-btn'+(i===v?' sel':'');});
+  const labels=['0点　ベッド上','1点　屋内のみ','2点　外出可'];
+  document.getElementById('mna-c-auto').textContent=labels[v]; calcMna();
+}
+function setMnaE(v){
+  mnaS.e=v;
+  [0,1,2].forEach(i=>{const b=document.getElementById(`e-btn-${i}`);if(b)b.className='confirm-btn'+(i===v?' sel':'');});
+  const labels=['0点　重度','1点　中等度','2点　問題なし'];
+  document.getElementById('mna-e-auto').textContent=labels[v]; calcMna();
+}
+function selMna(q,score){
+  document.querySelectorAll(`[id^="mna-${q}-"]`).forEach(b=>b.classList.remove('selected'));
+  const el=document.getElementById(`mna-${q}-${score}`); if(el)el.classList.add('selected');
+  mnaS[q]=score; calcMna();
+}
+function calcMna(){
+  let mnaF;
+  if(p2BmiValue>=23)mnaF=3; else if(p2BmiValue>=21)mnaF=2; else if(p2BmiValue>=19)mnaF=1; else mnaF=0;
+  mnaS.f=mnaF;
+  document.getElementById('mna-f-auto').textContent=`${mnaF}点　BMI ${p2BmiValue.toFixed(1)}`;
+  const total=mnaS.a+mnaS.b+mnaS.c+mnaS.d+mnaS.e+mnaS.f;
+  document.getElementById('mna-score').textContent=total+' / 14点';
+  let jt,bg,col;
+  if(total>=12){jt='栄養状態良好';bg='#f0fff4';col='#1a8a50';}
+  else if(total>=8){jt='低栄養リスクあり';bg='#fff8f0';col='#e08030';}
+  else{jt='低栄養';bg='#fff0f0';col='#e03030';}
+  document.getElementById('mna-total-badge').style.background=bg;
+  document.getElementById('mna-total-badge').style.color=col;
+  document.getElementById('mna-judge-text').textContent=jt;
+}
+
+function initMnaScreen(){
+  const realCL = getRealCL();
+  // C: walk ability from CL Q6-8 (raw answers: false=はい=can do)
+  const walkOk = !realCL.q6 || !realCL.q7 || !realCL.q8;
+  setMnaC(walkOk ? 2 : 1);
+  // E: cognitive/depression
+  const{score,cogHit,depHit,reason}=calcEScore();
+  mnaS.e=score;
+  const eLabels=['0点　重度','1点　中等度','2点　問題なし'];
+  document.getElementById('mna-e-auto').textContent=eLabels[score];
+  document.getElementById('e-cog-cnt').textContent=`${cogHit} / 3項目`;
+  document.getElementById('e-dep-cnt').textContent=`${depHit} / 5項目`;
+  document.getElementById('e-reason').textContent=reason;
+  [0,1,2].forEach(i=>{const b=document.getElementById(`e-btn-${i}`);if(b)b.className='confirm-btn'+(i===score?' sel':'');});
+  calcMna();
+}
+
+function showSummary(){
+  go('p2-summary');
+  const grMax=Math.max(getV('grip-r'),getV('grip-l'));
+  const wSec=getV('walk-sec'),wSp=wSec>0?4/wSec:0;
+  const stSec=getV('standup-sec'),rsst=getV('rsst-cnt');
+  const oneLeg=getV('oneleg-sec');
+  const calfMax=Math.max(getV('calf-r'),getV('calf-l'));
+  const cut=gripCutoff(),cutL=gripCutLabel();
+  const calfCut=gender==='female'?33:34;
+  const mnaTotal=mnaS.a+mnaS.b+mnaS.c+mnaS.d+mnaS.e+mnaS.f;
+  const gLabel=gender==='male'?'男性':'女性';
+  document.getElementById('sum-sub').textContent=`${gLabel}・${p2AgeValue}歳　AWGS基準適用`;
+  const rows=[
+    {icon:'🏋️',label:'握力（最大値）',skip:skipFlags.grip,val:`${grMax.toFixed(1)} kg`,ok:grMax>=cut,ref:`基準値 ${cutL}`},
+    {icon:'🦵',label:'下腿周径（最大値）',skip:skipFlags.calf,val:`${calfMax.toFixed(1)} cm`,ok:calfMax>=calfCut,ref:`基準値 ${calfCut}cm以上`},
+    {icon:'🚶',label:'4m歩行速度',skip:skipFlags.walk,val:`${wSp.toFixed(2)} m/s`,ok:wSp>=1.0,ref:'基準値 1.0m/s以上'},
+    {icon:'🪑',label:'5回立ち上がりテスト',skip:skipFlags.standup,val:`${stSec.toFixed(1)} 秒`,ok:stSec<=12,ref:'基準値 12秒以内'},
+    {icon:'🧍',label:'開眼片足立ちテスト',skip:skipFlags.oneleg,val:`${oneLeg.toFixed(1)} 秒`,ok:oneLeg>=15,ref:'基準値 15秒以上'},
+    {icon:'👄',label:'反復唾液嚥下テスト（RSST）',skip:skipFlags.rsst,val:`${rsst} 回/30秒`,ok:rsst>=3,ref:'基準値 3回以上'},
+    {icon:'🥗',label:'簡易栄養状態評価（MNA®-SF）',skip:false,val:`${mnaTotal} / 14点`,ok:mnaTotal>=12,ref:'基準値 12点以上'},
+  ];
+  let html='';
+  rows.forEach(r=>{
+    if(r.skip){html+=`<div class="sum-row"><span class="sum-label">${r.icon} ${r.label}</span><span class="sum-val" style="color:#a0b0c0;font-size:13px;">— 測定困難</span></div>`;}
+    else{html+=`<div class="sum-row"><span class="sum-label">${r.icon} ${r.label}<span class="sum-ref">　${r.ref}</span></span><span class="sum-val ${r.ok?'ok-col':'ng-col'}">${r.ok?'✓':'⚠️'} ${r.val}</span></div>`;}
+  });
+  const measured=rows.filter(r=>!r.skip);
+  const ng=measured.filter(r=>!r.ok).length;
+  const col=ng===0?'ok-col':ng<=2?'warn-col':'ng-col';
+  const skipCnt=rows.filter(r=>r.skip).length;
+  html+=`<div class="sum-row" style="border-bottom:none;padding-top:14px;border-top:2px solid #e0e8f0;margin-top:6px;"><span class="sum-label" style="font-weight:700;font-size:16px;">基準値未満の項目数</span><span class="sum-val ${col}" style="font-size:22px;">${ng} / ${measured.length}項目${skipCnt>0?`　<span style="font-size:12px;color:#a0b0c0;">（${skipCnt}項目除外）</span>`:''}</span></div>`;
+  document.getElementById('sum-body').innerHTML=html;
+}
+
+// Phase 2 → Phase 3 transition
+function goToReport(){
+  if(consentValue===null){ if(!confirm('研究同意が未選択です。このまま進みますか？'))return; }
+
+  const realCL = getRealCL();
+  const pid=document.getElementById('p2-pid').value.trim()||'001';
+  const h=parseFloat(document.getElementById('p2-ht').value)||160;
+  const w=parseFloat(document.getElementById('p2-wt').value)||55;
+
+  // Build full CL array from Phase 1 real data
+  let clArray;
+  if (realCL.cl) {
+    clArray = realCL.cl; // Already 24 risk-booleans
+  } else {
+    // Fallback: construct from demo
+    clArray = Array(24).fill(false);
+    clArray[5]=realCL.q6; clArray[6]=realCL.q7; clArray[7]=realCL.q8;
+    clArray[10]=(mnaS.b<=1);
+    clArray[15]=realCL.q7;
+    realCL.cog.forEach((v,i)=>{clArray[16+i]=v;});
+    realCL.dep.forEach((v,i)=>{clArray[19+i]=v;});
+  }
+
+  const phase2Data={
+    pid, gender, age:p2AgeValue,
+    ht:h, wt:w, bmi:p2BmiValue,
+    gripR:getV('grip-r'), gripL:getV('grip-l'),
+    calfR:getV('calf-r'), calfL:getV('calf-l'),
+    walkSec:getV('walk-sec'),
+    standupSec:getV('standup-sec'),
+    oneLegSec:getV('oneleg-sec'),
+    rsstCnt:getV('rsst-cnt'),
+    mnaTotal:mnaS.a+mnaS.b+mnaS.c+mnaS.d+mnaS.e+mnaS.f,
+    mnaBreakdown:{...mnaS},
+    skipFlags:{...skipFlags},
+    consent:consentValue,
+    consentDate,
+    cl: clArray
+  };
+
+  // Save to localStorage for Phase 3
+  localStorage.setItem('frail_phase2', JSON.stringify(phase2Data));
+
+  // Switch to Phase 3 name screen (SPA transition, not new window)
+  document.getElementById('hdr-sub').textContent = 'レポート発行';
+  go('p3-name');
+}
+
+// ============================================================
+// Phase 3: Report
+// ============================================================
+let S = null, PV = null, cmpMode = false, cP = null, cL = null;
+
+function p3GripCut() {
+  const a = S.age, f = S.gender === 'female';
+  return (a >= 50 && a <= 64) ? (f ? 20 : 34) : (f ? 18 : 28);
+}
+function p3GripNote() {
+  return (S.age >= 50 && S.age <= 64) ? 'AWGS 2025（50〜64歳）' : 'AWGS 2025（65歳以上）';
+}
+function p3CalfCut() { return S.gender === 'female' ? 33 : 34; }
+
+function calcJCHS() {
+  const gm = Math.max(S.gripR, S.gripL);
+  const g = p3GripCut();
+  const ws = S.walkSec > 0 ? 4 / S.walkSec : 0;
+  const skip = S.skipFlags || {};
+  const gripOk = skip.grip ? null : (gm >= g);
+  const walkOk = skip.walk ? null : (ws >= 1.0);
+  const its = [
+    { l:'①筋力低下', ok:gripOk, skip:skip.grip, v:skip.grip?'測定困難':`握力 ${gm.toFixed(1)}kg`, r:`基準${g}kg以上` },
+    { l:'②歩行速度低下', ok:walkOk, skip:skip.walk, v:skip.walk?'測定困難':`${ws.toFixed(2)}m/s`, r:'基準1.0m/s以上' },
+    { l:'③体重減少', ok:!S.cl[10], skip:false, v:S.cl[10]?'6ヶ月2kg以上減':'減少なし', r:'6ヶ月で2kg以上' },
+    { l:'④疲労感', ok:!S.cl[19], skip:false, v:S.cl[19]?'疲労感あり':'問題なし', r:'わけもなく疲れる' },
+    { l:'⑤活動量低下', ok:!S.cl[7]&&!S.cl[15], skip:false, v:(!S.cl[7]&&!S.cl[15])?'問題なし':'低下あり', r:'週1外出・歩行習慣' },
+  ];
+  const scorableItems = its.filter(i => !i.skip && i.ok !== null);
+  const sc = scorableItems.filter(i => !i.ok).length;
+  const skipCnt = its.filter(i => i.skip).length;
+  let vd, vc, vdc;
+  if (sc >= 3) { vd='フレイル'; vc='#e03030'; vdc='筋力・歩行・栄養など複数の機能が低下し、要介護になりやすい状態です。早めの介入が重要です。'; }
+  else if (sc >= 1) { vd='プレフレイル'; vc='#e08030'; vdc='フレイルの前段階です。適切な運動・栄養管理で健常な状態に戻ることができます。'; }
+  else { vd='健常'; vc='#1a8a50'; vdc='現在の機能は維持されています。定期的なチェックで現状を維持しましょう。'; }
+  if (skipCnt > 0) vdc += `（${skipCnt}項目は測定困難のため判定除外）`;
+  return { its, sc, skipCnt, vd, vc, vdc };
+}
+
+function calcPS() {
+  const skip = S.skipFlags || {};
+  const gm = Math.max(S.gripR, S.gripL), g = p3GripCut();
+  const ws = S.walkSec > 0 ? 4 / S.walkSec : 0;
+  const st = S.standupSec, ol = S.oneLegSec, rs = S.rsstCnt;
+  let grip = skip.grip ? null : Math.min(5, Math.max(0, Math.round(gm / g * 3.5)));
+  let wk;
+  if (skip.walk) wk = null;
+  else if (ws >= 1.4) wk = 5; else if (ws >= 1.2) wk = 4; else if (ws >= 1.0) wk = 3; else if (ws >= 0.8) wk = 2; else if (ws >= 0.6) wk = 1; else wk = 0;
+  let su;
+  if (skip.standup) su = null;
+  else if (st <= 8) su = 5; else if (st <= 10) su = 4; else if (st <= 12) su = 3; else if (st <= 16) su = 2; else if (st <= 20) su = 1; else su = 0;
+  let bal;
+  if (skip.oneleg) bal = null;
+  else if (ol >= 60) bal = 5; else if (ol >= 45) bal = 4; else if (ol >= 30) bal = 3; else if (ol >= 15) bal = 2; else if (ol >= 10) bal = 1; else bal = 0;
+  let rsScore;
+  if (skip.rsst) rsScore = null;
+  else if (rs >= 5) rsScore = 5; else if (rs >= 4) rsScore = 4; else if (rs >= 3) rsScore = 3; else if (rs >= 2) rsScore = 2; else if (rs >= 1) rsScore = 1; else rsScore = 0;
+  const mna = S.mnaTotal;
+  let mnaScore; if (mna >= 12) mnaScore = 5; else if (mna >= 10) mnaScore = 3; else if (mna >= 8) mnaScore = 2; else mnaScore = 0;
+  return [grip, wk, su, bal, rsScore, mnaScore];
+}
+function calcPSTotal(ps) { return ps.filter(v => v !== null).reduce((a, b) => a + b, 0); }
+function psForChart(ps) { return ps.map(v => v === null ? 0 : v); }
+
+function calcLS() {
+  const cl = S.cl;
+  function sc(arr) { return Math.round(arr.filter(v => !v).length / arr.length * 5); }
+  return [sc(cl.slice(0,5)),sc(cl.slice(5,10)),sc([cl[10],...(S.bmi<18.5?[true]:[false])]),sc(cl.slice(11,14)),sc(cl.slice(14,16)),sc(cl.slice(16,19)),sc(cl.slice(19,24))];
+}
+function calcCLTotal() {
+  const clRisk = S.cl.slice(0, 19).filter(Boolean).length;
+  const bmiRisk = S.bmi < 18.5 ? 1 : 0;
+  return { risk: clRisk + bmiRisk, total: 20 };
+}
+function clComment(risk) {
+  if (risk >= 10) return { text:'⚠️ 生活機能低下の心配があります。', bg:'#fff0f0', color:'#e03030' };
+  if (risk >= 4) return { text:'一部の生活機能に注意が必要です。', bg:'#fff8f0', color:'#e08030' };
+  return { text:'日常生活機能は良好に保たれています。', bg:'#f0fff4', color:'#1a8a50' };
+}
+
+function mkChart(id, labels, cur, prev, cc, cprev) {
+  const ds = [{ label:'今回', data:cur, backgroundColor:cc+'30', borderColor:cc, borderWidth:2, pointBackgroundColor:cur.map(v=>v<=2?'#e03030':cc), pointRadius:3 }];
+  if (cmpMode && prev) {
+    ds.unshift({ label:'前回', data:prev, backgroundColor:cprev+'18', borderColor:cprev, borderWidth:1.5, borderDash:[4,4], pointBackgroundColor:cprev, pointRadius:2 });
+  }
+  return new Chart(document.getElementById(id), {
+    type:'radar', data:{labels,datasets:ds},
+    options:{ responsive:true, scales:{r:{min:0,max:5,ticks:{stepSize:1,display:false},grid:{color:'#d8e4f0'},angleLines:{color:'#d8e4f0'},pointLabels:{font:{size:9,weight:'600'},color:'#3a5a7a'}}}, plugins:{legend:{display:false}}, animation:{duration:350} }
+  });
+}
+function buildLeg(id, cc, cprev) {
+  document.getElementById(id).innerHTML = cmpMode ? `<span><span class="ld" style="background:${cc};"></span>今回</span><span><span class="ld" style="background:${cprev};"></span>前回</span>` : `<span><span class="ld" style="background:${cc};"></span>今回</span>`;
+}
+function renderCharts() {
+  if (cP) { cP.destroy(); cP = null; }
+  if (cL) { cL.destroy(); cL = null; }
+  const p = calcPS(), l = calcLS();
+  const skip = S.skipFlags || {};
+  const gripLbl=skip.grip?'筋力※':'筋力', walkLbl=skip.walk?'歩行速度※':'歩行速度', standLbl=skip.standup?'立ち上がり※':'立ち上がり', balLbl=skip.oneleg?'バランス※':'バランス', rsstLbl=skip.rsst?'嚥下機能※':'嚥下機能';
+  const prevPS=(cmpMode&&PV&&PV.psScores)?PV.psScores:null;
+  const prevLS=(cmpMode&&PV&&PV.lsScores)?PV.lsScores:null;
+  cP=mkChart('chart-phys',[gripLbl,walkLbl,standLbl,balLbl,rsstLbl,'栄養状態'],psForChart(p),prevPS,'#1a3a6a','#9ab8d8');
+  cL=mkChart('chart-life',['日常生活機能','運動機能','栄養状態','お口・飲み込み','外出・交流','認知機能','気力・こころ'],l,prevLS,'#e87a30','#f0c898');
+  buildLeg('lp','#1a3a6a','#9ab8d8');
+  buildLeg('ll','#e87a30','#f0c898');
+}
+
+function buildScoreBox() {
+  const ps=calcPS(), psTotal=calcPSTotal(ps), validCount=ps.filter(v=>v!==null).length, maxPossible=validCount*5;
+  const pvPS=(cmpMode&&PV)?PV.psTotal:null, psDiff=pvPS!==null?psTotal-pvPS:null;
+  const clt=calcCLTotal(), clPrev=(cmpMode&&PV)?PV.clRisk:null, clDiff=clPrev!==null?clt.risk-clPrev:null, clC=clComment(clt.risk);
+  function diffBadge(d,upGood){
+    if(d===null)return '';
+    const imp=upGood?(d>0):(d<0),eq=d===0;
+    const bc=eq?'bkp':imp?'bok':'bng',bt=eq?'維持':imp?'改善':'注意';
+    const cls=eq?'diff-eq':imp?'diff-up':'diff-dn';
+    return `<span class="${cls}">${d>0?'▲':d<0?'▼':'→'}${Math.abs(d)}</span><span class="bdg ${bc}">${bt}</span>`;
+  }
+  const skipCnt=ps.filter(v=>v===null).length;
+  const skipNote=skipCnt>0?`<div class="score-note" style="color:#e08030;">※${skipCnt}項目は測定困難のため除外（最大${maxPossible}点換算）</div>`:'';
+  document.getElementById('score-box').innerHTML = `
+    <div class="score-item main-score">
+      <div class="score-item-title">📊 身体機能スコア（改善度の主指標）</div>
+      <div><span class="score-num" style="color:${psTotal>=20?'#1a8a50':psTotal>=13?'#e08030':'#e03030'}">${psTotal}</span><span class="score-max"> / ${maxPossible}点</span></div>
+      ${psDiff!==null?`<div class="score-diff">前回：${pvPS}点 → 今回：${psTotal}点　${diffBadge(psDiff,true)}</div>`:''}
+      <div class="score-note score-note-long">測定値から算出（筋力・歩行・立ち上がり・バランス・嚥下・栄養）</div><div class="score-note score-note-short">測定値から算出（6軸）</div>
+      <div class="score-note" style="margin-top:3px;">${psTotal>=20?'<span style="color:#1a8a50;font-weight:700;">✓ 良好</span>':psTotal>=13?'<span style="color:#e08030;font-weight:700;">⚠️ 注意</span>':'<span style="color:#e03030;font-weight:700;">🚩 低下</span>'}&nbsp;（目安：20点以上良好・13〜19注意・12以下低下）</div>
+      ${skipNote}
+    </div>
+    <div class="score-item">
+      <div class="score-item-title">📋 生活機能スコア（参考）</div>
+      <div><span class="score-num" style="color:${clC.color};">${clt.risk}</span><span class="score-max"> / 20点</span></div>
+      ${clDiff!==null?`<div class="score-diff">前回：${clPrev}点 → 今回：${clt.risk}点　${diffBadge(clDiff,false)}</div>`:''}
+      <div class="score-note">基本チェックリスト Q1〜20のリスク該当数</div>
+      <div class="score-note" style="margin-top:3px;">${clt.risk>=10?'<span style="color:#e03030;font-weight:700;">🚩 低下</span>':clt.risk>=4?'<span style="color:#e08030;font-weight:700;">⚠️ 注意</span>':'<span style="color:#1a8a50;font-weight:700;">✓ 良好</span>'}&nbsp;<span style="color:#9abacc;font-size:9px;">（目安：0〜3点良好・4〜9点注意・10点以上低下）※低いほど良好</span></div>
+    </div>`;
+}
+
+function buildImprove() { document.getElementById('srow').innerHTML = ''; }
+
+function buildTable() {
+  const skip=S.skipFlags||{};
+  const ws=S.walkSec>0?4/S.walkSec:0, gm=Math.max(S.gripR,S.gripL), cm=Math.max(S.calfR,S.calfL);
+  const g=p3GripCut(), cv=p3CalfCut();
+  const pws=(cmpMode&&PV)?(PV.walkSec>0?4/PV.walkSec:0):null;
+  const rows=[
+    {icon:'💪',name:'筋力（握力）',val:`${gm.toFixed(1)} kg`,ref:`基準${g}kg以上`,refNote:p3GripNote(),ok:gm>=g,skip:skip.grip,desc:`全身の筋力低下を反映する簡便な指標<br><span style='color:#b0c0d0;font-size:8px;'>※基準はAWGS 2025準拠（${S.age>=50&&S.age<=64?'50〜64歳':'65歳以上'}）</span>`,prev:(cmpMode&&PV)?`${PV.gripMax} kg`:null,upGood:true,prevRaw:PV?PV.gripMax:null,curRaw:gm},
+    {icon:'🦵',name:'下腿周径',val:`${cm.toFixed(1)} cm`,ref:`基準${cv}cm以上`,ok:cm>=cv,skip:skip.calf,desc:'ふくらはぎの筋肉量。サルコペニアの簡易指標',prev:(cmpMode&&PV)?`${PV.calfMax} cm`:null,upGood:true,prevRaw:PV?PV.calfMax:null,curRaw:cm},
+    {icon:'🚶',name:'歩行速度（4m）',val:`${ws.toFixed(2)} m/s`,ref:'基準1.0m/s以上',ok:ws>=1.0,skip:skip.walk,desc:'転倒・要介護リスクを予測する最重要指標',prev:pws?`${pws.toFixed(2)} m/s`:null,upGood:true,prevRaw:pws,curRaw:ws},
+    {icon:'🪑',name:'立ち上がり（5回）',val:`${S.standupSec.toFixed(1)} 秒`,ref:'基準12秒以内',ok:S.standupSec<=12,skip:skip.standup,desc:'下肢筋力・バランス・瞬発力の総合評価',prev:(cmpMode&&PV)?`${PV.standupSec} 秒`:null,upGood:false,prevRaw:PV?PV.standupSec:null,curRaw:S.standupSec},
+    {icon:'🧍',name:'バランス（開眼片足立ち）',val:`${S.oneLegSec.toFixed(1)} 秒`,ref:'基準15秒以上',ok:S.oneLegSec>=15,skip:skip.oneleg,desc:'静的バランス能力・転倒リスクの指標（上限60秒）',prev:(cmpMode&&PV)?`${PV.oneLegSec} 秒`:null,upGood:true,prevRaw:PV?PV.oneLegSec:null,curRaw:S.oneLegSec},
+    {icon:'👄',name:'嚥下機能（RSST）',val:`${S.rsstCnt} 回/30秒`,ref:'基準3回以上',ok:S.rsstCnt>=3,skip:skip.rsst,desc:'のどの飲み込む力。誤嚥性肺炎リスクの指標',prev:(cmpMode&&PV)?`${PV.rsstCnt} 回`:null,upGood:true,prevRaw:PV?PV.rsstCnt:null,curRaw:S.rsstCnt},
+    {icon:'🥗',name:'栄養状態（MNA®-SF）',val:`${S.mnaTotal} / 14点`,ref:'12点以上：良好',ok:S.mnaTotal>=12,skip:false,desc:'食事量・体重・活動性・急性疾患・神経精神・BMIの6項目で評価',prev:(cmpMode&&PV)?`${PV.mnaTotal} 点`:null,upGood:true,prevRaw:PV?PV.mnaTotal:null,curRaw:S.mnaTotal},
+    {icon:'📏',name:'BMI',val:`${S.bmi.toFixed(1)} kg/m²`,ref:'18.5〜24.9が目安',ok:S.bmi>=18.5&&S.bmi<25,skip:false,desc:'低体重・肥満の両方がフレイルリスク',prev:null,upGood:true,prevRaw:null,curRaw:S.bmi},
+  ];
+  document.getElementById('mt').innerHTML =
+    `<tr><th></th><th>項目</th><th>今回</th>${cmpMode?'<th>前回・変化</th>':''}<th>基準</th><th>判定</th><th>この項目について</th></tr>` +
+    rows.map(r=>{
+      let judgeCell = r.skip ? `<td class="skb">測定困難<br><span style="font-size:8px;color:#b0c0d0;">除外</span></td>` : r.ok ? `<td style="color:#1a8a50;font-weight:700;">✓ 良好</td>` : `<td style="color:#e03030;font-weight:700;">🚩 要注意</td>`;
+      let prevCell='';
+      if(cmpMode){
+        if(r.skip)prevCell='<td style="color:#c0d0d8;">—</td>';
+        else if(r.prev&&r.prevRaw!==null){const df=r.curRaw-r.prevRaw;const gd=r.upGood?(df>0):(df<0);const dec=r.val.includes('m/s')?2:1;prevCell=`<td>${r.prev}<br><span class="${gd?'du':'dd'}">${gd?'▲':'▼'}${Math.abs(df).toFixed(dec)}</span></td>`;}
+        else prevCell='<td style="color:#c0d0d8;">—</td>';
+      }
+      return `<tr><td style="font-size:13px;text-align:center;">${r.icon}</td><td style="font-weight:600;white-space:nowrap;">${r.name}${r.skip?'<span class="skip-notice">測定困難</span>':''}</td><td style="font-weight:700;color:${r.skip?'#a0b0c0':'inherit'};">${r.skip?'—':r.val}</td>${cmpMode?prevCell:''}<td style="color:#7a9ab8;white-space:nowrap;">${r.ref}</td>${judgeCell}<td class="dc">${r.desc}</td></tr>`;
+    }).join('');
+}
+
+function buildAdv(jchs) {
+  const ps=calcPS(), l=calcLS(), skip=S.skipFlags||{};
+  const physItemsAll=[];
+  if(!skip.grip&&ps[0]!==null&&ps[0]<=2)physItemsAll.push({i:'💪',t:'筋力低下',b:'今の体の状態として、握力・下肢筋力の低下が見られます。週2〜3回の椅子スクワットが改善に直結します。'});
+  if(!skip.walk&&ps[1]!==null&&ps[1]<=2)physItemsAll.push({i:'🚶',t:'歩行速度の低下',b:'今の体の状態として、歩くスピードが落ちています。転倒リスクに直結するため、毎日10分のウォーキングから始めましょう。'});
+  if(!skip.standup&&ps[2]!==null&&ps[2]<=2)physItemsAll.push({i:'🪑',t:'立ち上がり機能の低下',b:'今の体の状態として、下肢の瞬発力が低下しています。椅子からの立ち上がり練習を1日5回続けましょう。'});
+  if(!skip.oneleg&&ps[3]!==null&&ps[3]<=2)physItemsAll.push({i:'🧍',t:'バランス機能の低下',b:'今の体の状態として、片足でのバランス保持が短い状態です。壁そばで片足立ち10秒×3回を習慣にしましょう。転倒予防に直結します。'});
+  if(!skip.rsst&&ps[4]!==null&&ps[4]<=2)physItemsAll.push({i:'👄',t:'飲み込む力の低下',b:'今の体の状態として、嚥下反射の回数が少ない状態です。食前の空嚥下（ゴックン体操）5回を毎日続けましょう。'});
+  if(ps[5]!==null&&ps[5]<=2)physItemsAll.push({i:'🥗',t:'栄養状態の低下',b:'今の体の状態として、栄養面に課題があります。1日3食の確保と、たんぱく質（肉・魚・大豆）を意識した食事が重要です。'});
+  const physItems=physItemsAll.slice(0,3), physExtra=physItemsAll.length>3?physItemsAll.length-3:0;
+  const physOkNames=[];
+  if(!skip.grip&&ps[0]!==null&&ps[0]>2)physOkNames.push('筋力');
+  if(!skip.walk&&ps[1]!==null&&ps[1]>2)physOkNames.push('歩行速度');
+  if(!skip.standup&&ps[2]!==null&&ps[2]>2)physOkNames.push('立ち上がり');
+  if(!skip.oneleg&&ps[3]!==null&&ps[3]>2)physOkNames.push('バランス');
+  if(!skip.rsst&&ps[4]!==null&&ps[4]>2)physOkNames.push('嚥下機能');
+  if(ps[5]!==null&&ps[5]>2)physOkNames.push('栄養状態');
+  const lifeItemsAll=[];
+  if(l[4]<=2)lifeItemsAll.push({i:'🏠',t:'外出・交流の機会の減少',b:'外出や人との交流の機会が減っています。週2回以上の外出と仲間とのつながりが、心身の機能維持に有効です。'});
+  if(l[6]<=2)lifeItemsAll.push({i:'😔',t:'気力・こころの低下',b:'生活の充実感や意欲の低下が見られます。好きな活動や仲間とのつながりが、心身の活力を取り戻す近道です。'});
+  if(l[5]<=2)lifeItemsAll.push({i:'🧠',t:'認知機能の変化',b:'物忘れや判断力の変化に気づいていますか？早めの気づきが大切です。脳を使う活動（読書・会話・趣味）を日課にしましょう。'});
+  if(l[1]<=2)lifeItemsAll.push({i:'🏃',t:'運動習慣の低下',b:'「体を動かすのがおっくう」という自覚が出ています。まずは短い散歩から始めましょう。'});
+  if(l[0]<=2)lifeItemsAll.push({i:'🛖',t:'日常生活機能の低下',b:'日常の身の回りの動作に困難が生じています。早めに専門職へ相談することをお勧めします。'});
+  if(l[3]<=2)lifeItemsAll.push({i:'👄',t:'お口・飲み込み機能の変化',b:'口の動きや飲み込みに変化が出ています。食前の口腔体操と空嚥下練習を日課にしましょう。'});
+  if(l[2]<=2)lifeItemsAll.push({i:'🥗',t:'栄養・食生活の変化',b:'食事量や体重に変化が出ています。1日3食の確保とたんぱく質を意識した食事が重要です。'});
+  const lifeItems=lifeItemsAll.slice(0,3), lifeExtra=lifeItemsAll.length>3?lifeItemsAll.length-3:0;
+  const lifeOkNames=[];
+  if(l[0]>2)lifeOkNames.push('日常生活');if(l[1]>2)lifeOkNames.push('運動習慣');if(l[2]>2)lifeOkNames.push('栄養');
+  if(l[3]>2)lifeOkNames.push('口腔・飲み込み');if(l[4]>2)lifeOkNames.push('外出・交流');if(l[5]>2)lifeOkNames.push('認知機能');if(l[6]>2)lifeOkNames.push('気力・こころ');
+  const allGood=physItems.length===0&&lifeItems.length===0;
+  function sec(items,okNames,extra,label){
+    let h=`<div style="font-size:10px;font-weight:700;color:#5a7a9a;margin:6px 0 3px;letter-spacing:0.05em;">${label}</div>`;
+    if(items.length===0&&extra===0){h+=`<div style="font-size:10px;color:#1a8a50;padding:3px 2px;">✅ 良好範囲です</div>`;}
+    else{h+=items.map(a=>`<div class="ai"><span class="ai-i">${a.i}</span><div class="ai-t"><strong>🚩 ${a.t}</strong><br>${a.b}</div></div>`).join('');
+      if(extra>0)h+=`<div style="font-size:10px;color:#7a9ab8;padding:3px 2px;">他${extra}項目に注意が必要です</div>`;
+      if(okNames.length>0)h+=`<div style="font-size:10px;color:#1a8a50;padding:3px 2px;">✅ ${okNames.join('・')}は良好範囲です</div>`;
+    } return h;
+  }
+  document.getElementById('adv').innerHTML=`<div class="adv-t">📌 あなたの結果から見えること</div>`+(allGood?`<div style="font-size:10px;color:#1a8a50;padding:5px 2px;">✅ 身体機能・生活機能ともに良好範囲です。現在の運動・食事・社会参加を継続しましょう。</div>`:sec(physItems,physOkNames,physExtra,'【身体機能】今の体の状態')+sec(lifeItems,lifeOkNames,lifeExtra,'【生活機能】日常の習慣・自覚'));
+}
+
+function buildMna() { /* MNA統合済 */ }
+
+function buildCourse(jchs) {
+  const skip=S.skipFlags||{}, ps=calcPS();
+  const ps4c=calcPS(), psT4c=calcPSTotal(ps4c), vc4c=ps4c.filter(v=>v!==null).length, mp4c=vc4c*5;
+  const psPct=mp4c>0?(psT4c/mp4c)*30:0;
+  const physLevel=psPct>=20?'good':psPct>=13?'caution':'low';
+  const lifeRisk=calcCLTotal().risk>=10, lifeCaution=calcCLTotal().risk>=4;
+  let recCourse;
+  if(physLevel==='low'||(physLevel==='caution'&&lifeRisk))recCourse=2;
+  else if(physLevel==='caution'||lifeRisk||lifeCaution)recCourse=1;
+  else recCourse=0;
+  const physRiskCnt=physLevel==='low'?4:physLevel==='caution'?2:0;
+  const courses=[
+    {n:'コース①　単発検診',tg:'良好（身体・生活ともに問題なし）',p:'¥5,000',pd:'1回完結',f:['フレイル判定全評価＋チャート','当日iPad結果表示','次回検診まで自主管理'],r:recCourse===0},
+    {n:'コース②　3ヶ月コース',tg:'低下傾向（身体機能スコア注意 または 生活機能低下）',p:'¥12,000',pd:'3ヶ月・10回',f:['初回検診込み','集団プログラム 週1回×10回','3ヶ月後チャート比較'],r:recCourse===1},
+    {n:'コース③　フレイル予防プログラム（6ヵ月）',tg:'低下（身体機能スコア低下 または 複合低下）',p:'¥20,000',pd:'6ヶ月・20回',f:['初回検診込み','集団プログラム 週1回×20回','3・6ヶ月後チャート比較'],r:recCourse===2},
+  ];
+  const sc=jchs.sc, jTotal2=jchs.its.filter(i=>!i.skip).length;
+  document.getElementById('crs').innerHTML=`
+    <div class="crs-t">🏃 推奨プログラム（複合判定に基づく）</div>
+    <div style="font-size:10px;color:#7a9ab8;margin-bottom:8px;">J-CHS <span style="color:#1a3a5c;">${jchs.sc}<span style="font-size:10px;color:#9abacc;">/${jTotal2}項目</span></span> <strong style="color:${jchs.sc>=3?'#e03030':jchs.sc>=1?'#e08030':'#1a8a50'};">${jchs.vd}</strong>　身体：<span style="color:#1a3a5c;">${psT4c}<span style="font-size:10px;color:#9abacc;">/${mp4c}</span></span> <strong style="color:${physLevel==='low'?'#e03030':physLevel==='caution'?'#e08030':'#1a8a50'};">${physLevel==='low'?'🚩低下':physLevel==='caution'?'⚠️注意':'✓良好'}</strong>　生活：<span style="color:#1a3a5c;">${calcCLTotal().risk}<span style="font-size:10px;color:#9abacc;">/20</span></span> <strong style="color:${lifeRisk?'#e03030':lifeCaution?'#e08030':'#1a8a50'};">${lifeRisk?'🚩低下':lifeCaution?'⚠️注意':'✓良好'}</strong>
+    <div class="ccs">${courses.map(c=>`<div class="ccard${c.r?' rec':''}">
+      ${c.r?'<div class="rb">★ 推奨</div>':''}
+      <div class="cn">${c.n}</div><div class="ctg">${c.tg}</div>
+      <div class="cp">${c.p}</div><div class="cpd">${c.pd}</div>
+      <div>${c.f.map(f=>`<div class="cf">・${f}</div>`).join('')}</div>
+    </div>`).join('')}</div>
+    ${recCourse===2?'<div style="margin-top:10px;padding:12px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#c03030;font-weight:600;line-height:1.8;">📌 担当スタッフにご相談ください。専用の6ヵ月プログラムをご案内いたします。</div>':''}
+    <div style="font-size:9px;color:#9abacc;margin-top:5px;">※自費診療（保険外）。完全予約制。下記公式LINEまたはお電話でお申し込みください。</div>`;
+}
+
+function p3BuildReport() {
+  // Load data from localStorage
+  try {
+    const raw = localStorage.getItem('frail_phase2');
+    if (raw) S = JSON.parse(raw);
+  } catch(e) {}
+
+  // Fallback to demo data if no Phase 2 data
+  if (!S) {
+    S = {
+      pid:'001', gender:'male', age:72, ht:165, wt:62, bmi:22.8,
+      gripR:24.5, gripL:22.0, calfR:33.0, calfL:32.5, walkSec:5.2,
+      standupSec:14.5, oneLegSec:18.0, rsstCnt:2, mnaTotal:10,
+      skipFlags:{grip:false,calf:false,walk:false,standup:false,oneleg:false,rsst:false},
+      cl:[false,false,true,false,false,false,false,false,true,true,true,false,true,false,false,true,false,true,false,true,false,false,false,true],
+      mnaBreakdown:{a:2,b:3,c:2,d:2,e:2,f:2}
+    };
+  }
+
+  const nm=document.getElementById('pt-name').value.trim()||'___________';
+  const st=document.getElementById('pt-staff').value.trim()||'___';
+  const nd=document.getElementById('next-date').value.trim()||'未定';
+  const today=new Date();
+  const ds=`${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+  const gl=S.gender==='male'?'男性':'女性';
+  const an=(S.age>=50&&S.age<=64)?'<br><span style="font-size:9px;color:#9abacc;">※AWGS 2025（50〜64歳）適用</span>':'';
+  document.getElementById('rmeta').innerHTML=`受診者番号：${S.pid}<br>氏名：${nm} 様<br>性別：${gl}　年齢：${S.age}歳<br>検診日：${ds}${an}<br>担当者：${st}`;
+  document.getElementById('nxv').textContent=nd;
+
+  const j=calcJCHS();
+  document.getElementById('vbar').style.background=j.vc;
+  const jTotal=j.its.filter(i=>!i.skip).length;
+  document.getElementById('jchs-sc').innerHTML=`<span style="color:${j.sc>=3?'#e03030':j.sc>=1?'#e08030':'#1a8a50'};font-size:20px;font-weight:800;">${j.sc}</span><span style="color:#9abacc;font-size:13px;">/${jTotal}項目</span>`;
+  document.getElementById('vt').textContent=j.vd;
+  document.getElementById('vt').style.color=j.vc;
+  document.getElementById('vt').style.fontSize='20px';
+  document.getElementById('vd').textContent=j.vdc;
+  document.getElementById('jrow').innerHTML=j.its.map(it=>{
+    if(it.skip)return `<div class="ji" style="background:#f0f4f8;"><div class="ji-l" style="color:#9ab0c0">${it.l}</div><div class="ji-v" style="color:#9ab0c0">— 測定困難・除外</div><div class="ji-r">${it.r}</div></div>`;
+    return `<div class="ji" style="background:${it.ok?'#f0fff4':'#fff0f0'};"><div class="ji-l" style="color:${it.ok?'#1a8a50':'#e03030'}">${it.l}</div><div class="ji-v" style="color:${it.ok?'#1a8a50':'#e03030'}">${it.ok?'✓ 問題なし':'⚠️ 該当'}</div><div class="ji-r">${it.v}</div></div>`;
+  }).join('');
+
+  if(PV){
+    document.getElementById('cbtn').textContent='前回データと比較中';
+    document.getElementById('cbtn').className='tbtn on';
+    cmpMode=true;
+    document.getElementById('cmp-label').textContent=`今回（${ds}）vs 前回`;
+  }else{
+    document.getElementById('cbtn').textContent='前回データなし';
+    document.getElementById('cbtn').className='tbtn';
+    document.getElementById('cbtn').disabled=true;
+    cmpMode=false;
+    document.getElementById('cmp-label').textContent='（初回検診）';
+  }
+
+  renderCharts();
+  buildScoreBox();
+  buildImprove();
+  buildTable();
+  buildMna();
+  buildAdv(j);
+  buildCourse(j);
+
+  go('p3-report');
+}
+
+function toggleCmp(){
+  if(!PV)return;
+  cmpMode=!cmpMode;
+  document.getElementById('cbtn').textContent=cmpMode?'前回データと比較中':'比較OFF';
+  document.getElementById('cbtn').className='tbtn'+(cmpMode?' on':'');
+  renderCharts(); buildScoreBox(); buildImprove(); buildTable();
+}
+
+function exportCsv(type){
+  if(!S)return;
+  const gm=Math.max(S.gripR,S.gripL),cm=Math.max(S.calfR,S.calfL);
+  const ws=S.walkSec>0?(4/S.walkSec).toFixed(2):0;
+  const j=calcJCHS(),ps=calcPS(),clt=calcCLTotal(),psTotal=calcPSTotal(ps);
+  const skip=S.skipFlags||{};
+  const skipStr=Object.entries(skip).filter(([k,v])=>v).map(([k])=>k).join('|')||'なし';
+  const cs=S.consent;
+  let csv,fn;
+  if(type==='research'){
+    if(cs===null||cs===undefined){alert('学術利用への同意が未選択です。');return;}
+    if(!cs){alert('同意いただいていないため学術用CSVには出力されません。');return;}
+    const cDate=S.consentDate||'';
+    const h='ID,同意日時,年齢,性別,握力kg,下腿周径cm,歩行速度m/s,立ち上がり秒,片足立ち秒,RSST回,BMI,MNA点,J-CHSスコア,判定,身体機能スコア,生活機能スコア,測定困難項目';
+    const r=`${S.pid},${cDate},${S.age},${S.gender==='male'?'男':'女'},${skip.grip?'ND':gm.toFixed(1)},${skip.calf?'ND':cm.toFixed(1)},${skip.walk?'ND':ws},${skip.standup?'ND':S.standupSec},${skip.oneleg?'ND':S.oneLegSec},${skip.rsst?'ND':S.rsstCnt},${S.bmi.toFixed(1)},${S.mnaTotal},${j.sc},${j.vd},${psTotal},${clt.risk},${skipStr}`;
+    csv=h+'\n'+r; fn=`frail_research_${S.pid}.csv`;
+  }else{
+    const nm=document.getElementById('pt-name').value.trim()||'---';
+    const dt=new Date().toLocaleDateString('ja-JP');
+    const h='ID,氏名,検診日,年齢,性別,握力kg,下腿周径cm,歩行速度m/s,立ち上がり秒,片足立ち秒,RSST回,BMI,MNA点,J-CHSスコア,判定,身体機能スコア,生活機能スコア,測定困難項目,学術同意';
+    const r=`${S.pid},${nm},${dt},${S.age},${S.gender==='male'?'男':'女'},${skip.grip?'ND':gm.toFixed(1)},${skip.calf?'ND':cm.toFixed(1)},${skip.walk?'ND':ws},${skip.standup?'ND':S.standupSec},${skip.oneleg?'ND':S.oneLegSec},${skip.rsst?'ND':S.rsstCnt},${S.bmi.toFixed(1)},${S.mnaTotal},${j.sc},${j.vd},${psTotal},${clt.risk},${skipStr},${cs===true?1:0}`;
+    csv=h+'\n'+r; fn=`frail_${S.pid}_${new Date().toISOString().slice(0,10)}.csv`;
+  }
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=fn;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showTab(id, btn) {
+  ['t-rep','t-kpi'].forEach(t=>document.getElementById(t).style.display='none');
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ============================================================
+// Init
+// ============================================================
+p1CalcBmi();
+p2CalcBmi();
+</script>
+</body>
+</html>
