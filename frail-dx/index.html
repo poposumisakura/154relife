@@ -274,11 +274,11 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
 .bex-r { background: #1a3a6a; color: white; }
 
 @media print {
-  @page { size: A4; margin: 0; }
+  @page { size: A4; margin: 10mm 8mm; }
   .acts,.header,.progress-bar-wrap,.tabs,.ctog { display: none!important; }
   #t-kpi { display: none!important; }
   #p3-report { padding: 0!important; }
-  #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; padding-top: 5mm; }
+  #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; }
   #rep { font-size: 13px; }
   .vls { font-size: 11px; }
   .vt { font-size: 20px; }
@@ -297,8 +297,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   .cn { font-size: 12px; }
   .cf { font-size: 10px; }
   .rh { padding: 5px 14px; }
-  .rh-r { font-size: 9px; line-height: 1.6; text-align: right; }
-  .rh-r br { display: none!important; }
+  .rh-r { font-size: 10px; line-height: 1.8; text-align: right; }
   .vband { page-break-inside: avoid; padding: 3px 0; }
   .vmain { padding: 5px 14px; }
   .vcrit { padding: 5px 8px; font-size: 9px; }
@@ -355,6 +354,8 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
       <div class="start-sub">基本チェックリスト（24問）</div>
       <span class="field-label">受診者番号</span>
       <input class="text-input" id="p1-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
+      <span class="field-label">受診者氏名</span>
+      <input class="text-input" id="p1-name" type="text" placeholder="山田　太郎" style="font-size:22px;letter-spacing:0.05em;" />
       <span class="field-label">年齢</span>
       <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;">
         <input class="body-input" id="p1-age" type="number" value="70" min="40" max="100" step="1" inputmode="numeric" style="max-width:120px;" />
@@ -434,6 +435,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
         <div style="font-size:13px;font-weight:700;color:#1a5fa8;margin-bottom:10px;">📋 受診者情報（Phase 1より自動引き継ぎ）</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:15px;color:#1a3a5c;">
           <div>受診者番号：<strong id="p2-pid-display">---</strong></div>
+          <div>氏名：<strong id="p2-name-display">---</strong></div>
           <div>年齢：<strong id="p2-age-display">---</strong>歳</div>
           <div>性別：<strong id="p2-gender-display">---</strong></div>
           <div>BMI：<strong id="p2-bmi-display">---</strong></div>
@@ -443,15 +445,6 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
       </div>
       <!-- hidden inputs for JS compatibility -->
       <input type="hidden" id="p2-pid"><input type="hidden" id="p2-age"><input type="hidden" id="p2-ht"><input type="hidden" id="p2-wt">
-      <!-- 研究同意書 -->
-      <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">📋 学術研究へのデータ使用に関するご説明と同意</div>
-        <div style="font-size:12px;color:#5a7a9a;line-height:1.7;margin-bottom:10px;">本検診で得られた測定データは、個人が特定されない統計情報として、地域のフレイル対策向上を目的とした学術研究・学会発表に活用させていただく場合があります。<br><span style="font-size:11px;color:#8aaac0;">研究責任者：村上公英（理学療法士）</span></div>
-        <div style="display:flex;gap:10px;">
-          <div id="consent-yes" onclick="setConsent(true)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意する</div>
-          <div id="consent-no"  onclick="setConsent(false)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意しない</div>
-        </div>
-      </div>
       <button class="btn-start" onclick="startMeas()">測定パートを開始する</button>
     </div>
   </div>
@@ -749,12 +742,20 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   <div class="screen rpt-screen" id="p3-name" style="max-width:860px;">
     <div class="card">
       <div style="font-size:36px;text-align:center;margin-bottom:8px;">📋</div>
-      <div style="font-size:18px;font-weight:700;color:#1a3a5c;text-align:center;margin-bottom:3px;">レポート発行</div>
-      <div style="font-size:12px;color:#7a9ab8;text-align:center;margin-bottom:18px;">氏名・担当者・次回予定日を入力してください</div>
-      <span class="fl">受診者氏名</span><input class="fi" id="pt-name" placeholder="山田　太郎">
+      <div style="font-size:18px;font-weight:700;color:#1a3a5c;text-align:center;margin-bottom:3px;">担当者確認・研究同意</div>
+      <div style="font-size:12px;color:#7a9ab8;text-align:center;margin-bottom:18px;">担当者・次回予定日を入力し、研究同意を確認してください</div>
       <span class="fl">担当者氏名</span><input class="fi" id="pt-staff" placeholder="村上　公英">
       <span class="fl">次回検診予定日 <span style="font-size:11px;font-weight:400;color:#8aaac0;">（任意）</span></span>
       <input class="fi" id="next-date" placeholder="2026年10月1日" style="margin-bottom:14px;">
+      <!-- 学術研究同意書 -->
+      <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">📋 学術研究へのデータ使用に関するご説明と同意</div>
+        <div style="font-size:12px;color:#5a7a9a;line-height:1.7;margin-bottom:10px;">本検診で得られた測定データは、個人が特定されない統計情報として、地域のフレイル対策向上を目的とした学術研究・学会発表に活用させていただく場合があります。<br><span style="font-size:11px;color:#8aaac0;">研究責任者：村上公英（理学療法士）</span></div>
+        <div style="display:flex;gap:10px;">
+          <div id="consent-yes" onclick="setConsent(true)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意する</div>
+          <div id="consent-no"  onclick="setConsent(false)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意しない</div>
+        </div>
+      </div>
       <button class="btn-go" onclick="p3BuildReport()">レポートを発行する →</button>
     </div>
   </div>
@@ -877,7 +878,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
         <div style="font-size:10px;color:#7a9ab8;margin-bottom:10px;">※フレイル改善率：フレイルまたはプレフレイル判定だった方が1段階以上改善した割合</div>
         <div style="display:flex;gap:10px;margin-bottom:8px;">
           <div style="flex:1;background:#f5f8ff;border-radius:10px;padding:12px 14px;border:1.5px solid #d0e0f0;">
-            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e0e8f0;">コース②　3ヶ月</div>
+            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e0e8f0;">コース②　3ヵ月</div>
             <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">参加者数</div>
             <div style="font-size:20px;font-weight:800;color:#1a3a6a;margin-bottom:2px;">19<span style="font-size:11px;color:#9abacc;"> 名</span><span style="font-size:12px;color:#7a9ab8;font-weight:600;margin-left:6px;">（37%）</span></div>
             <div style="font-size:10px;color:#9abacc;margin-bottom:6px;">累計受診者52名中</div>
@@ -997,7 +998,7 @@ const QS = [
   { cat:"うつ・気力", icon:"😞", e:"😞", t:"（ここ2週間）わけもなく疲れたような感じがする",  h:"最近2週間、特に理由もないのに疲れた感じがする場合は「はい」。",               r:true  },
 ];
 
-let p1Cur = 0, p1Answers = new Array(QS.length).fill(null), p1Pid = "", p1BmiValue = null, p1HtVal = 160, p1WtVal = 55, p1AgeValue = 70, p1Gender = '';
+let p1Cur = 0, p1Answers = new Array(QS.length).fill(null), p1Pid = "", p1Name = "", p1BmiValue = null, p1HtVal = 160, p1WtVal = 55, p1AgeValue = 70, p1Gender = '';
 
 function p1SetGender(g) {
   p1Gender = g;
@@ -1038,6 +1039,7 @@ function p1CalcBmi() {
 function p1StartCheck() {
   p1Pid = document.getElementById('p1-pid').value.trim();
   if (!p1Pid) { alert('受診者番号を入力してください'); return; }
+  p1Name = document.getElementById('p1-name').value.trim();
   p1AgeValue = parseInt(document.getElementById('p1-age').value) || 70;
   if (!p1Gender) { alert('性別を選択してください'); return; }
   document.getElementById('hdr-id').textContent = (p1Gender === 'male' ? '♂' : '♀') + ' ' + p1Pid;
@@ -1106,6 +1108,7 @@ function goToPhase2() {
   // Save Phase 1 data to localStorage
   const p1Data = {
     pid: p1Pid,
+    name: p1Name,
     age: p1AgeValue,
     gender: p1Gender,
     ht: p1HtVal,
@@ -1128,6 +1131,7 @@ function goToPhase2() {
 
   // Update display panel
   document.getElementById('p2-pid-display').textContent = p1Pid;
+  document.getElementById('p2-name-display').textContent = p1Name || '---';
   document.getElementById('p2-age-display').textContent = p1AgeValue;
   document.getElementById('p2-gender-display').textContent = p1Gender === 'male' ? '男性' : '女性';
   document.getElementById('p2-ht-display').textContent = p1HtVal.toFixed ? p1HtVal.toFixed(1) : p1HtVal;
@@ -1289,7 +1293,6 @@ function stopSW(key){
 }
 
 function startMeas(){
-  if(consentValue===null){alert('研究同意の選択をお願いします');return;}
   const cut=gripCutoff(), lbl=gripCutLabel();
   const stdEl=document.getElementById('grip-std-text');
   if(stdEl)stdEl.textContent=`基準値：${lbl}`;
@@ -1499,8 +1502,6 @@ function showSummary(){
 
 // Phase 2 → Phase 3 transition
 function goToReport(){
-  if(consentValue===null){ if(!confirm('研究同意が未選択です。このまま進みますか？'))return; }
-
   const realCL = getRealCL();
   const pid=document.getElementById('p2-pid').value.trim()||'001';
   const h=parseFloat(document.getElementById('p2-ht').value)||160;
@@ -1532,8 +1533,6 @@ function goToReport(){
     mnaTotal:mnaS.a+mnaS.b+mnaS.c+mnaS.d+mnaS.e+mnaS.f,
     mnaBreakdown:{...mnaS},
     skipFlags:{...skipFlags},
-    consent:consentValue,
-    consentDate,
     cl: clArray
   };
 
@@ -1541,7 +1540,7 @@ function goToReport(){
   localStorage.setItem('frail_phase2', JSON.stringify(phase2Data));
 
   // Switch to Phase 3 name screen (SPA transition, not new window)
-  document.getElementById('hdr-sub').textContent = 'レポート発行';
+  document.getElementById('hdr-sub').textContent = '担当者確認・研究同意';
   go('p3-name');
 }
 
@@ -1770,7 +1769,7 @@ function buildCourse(jchs) {
   const physRiskCnt=physLevel==='low'?4:physLevel==='caution'?2:0;
   const courses=[
     {n:'コース①　単発検診',tg:'良好（身体・生活ともに問題なし）',p:'¥5,000',pd:'1回完結',f:['フレイル判定全評価＋チャート','当日iPad結果表示','次回検診まで自主管理'],r:recCourse===0},
-    {n:'コース②　3ヶ月コース',tg:'低下傾向（身体機能スコア注意 または 生活機能低下）',p:'¥12,000',pd:'3ヶ月・10回',f:['初回検診込み','集団プログラム 週1回×10回','3ヶ月後チャート比較'],r:recCourse===1},
+    {n:'コース②　3ヵ月コース',tg:'低下傾向（身体機能スコア注意 または 生活機能低下）',p:'¥12,000',pd:'3ヵ月・10回',f:['初回検診込み','集団プログラム 週1回×10回','3ヵ月後チャート比較'],r:recCourse===1},
     {n:'コース③　6ヵ月コース',tg:'低下（身体機能スコア低下 または 複合低下）',p:'¥20,000',pd:'6ヶ月・20回',f:['初回検診込み','集団プログラム 週1回×20回','3・6ヶ月後チャート比較'],r:recCourse===2},
   ];
   const sc=jchs.sc, jTotal2=jchs.its.filter(i=>!i.skip).length;
@@ -1778,7 +1777,7 @@ function buildCourse(jchs) {
     <div class="crs-t">🏃 推奨プログラム（複合判定に基づく）</div>
     <div style="font-size:10px;color:#7a9ab8;margin-bottom:8px;">J-CHS <span style="color:#1a3a5c;">${jchs.sc}<span style="font-size:10px;color:#9abacc;">/${jTotal2}項目</span></span> <strong style="color:${jchs.sc>=3?'#e03030':jchs.sc>=1?'#e08030':'#1a8a50'};">${jchs.vd}</strong>　身体：<span style="color:#1a3a5c;">${psT4c}<span style="font-size:10px;color:#9abacc;">/${mp4c}</span></span> <strong style="color:${physLevel==='low'?'#e03030':physLevel==='caution'?'#e08030':'#1a8a50'};">${physLevel==='low'?'🚩低下':physLevel==='caution'?'⚠️注意':'✓良好'}</strong>　生活：<span style="color:#1a3a5c;">${calcCLTotal().risk}<span style="font-size:10px;color:#9abacc;">/20</span></span> <strong style="color:${lifeRisk?'#e03030':lifeCaution?'#e08030':'#1a8a50'};">${lifeRisk?'🚩低下':lifeCaution?'⚠️注意':'✓良好'}</strong>
     ${recCourse===2
-      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#c03030;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}点・生活機能リスク ${calcCLTotal().risk}点という結果でした。複数の機能低下が重なっており、早期の集中的な介入が効果的です。6ヵ月コースへのご参加をお勧めします。</div>`
+      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#1a3a5c;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}/${mp4c}点・生活機能リスク ${calcCLTotal().risk}/20点でした。複数の機能に低下の傾向が見られました。今がケアを始めるタイミングです。6ヵ月コースで、医療チームと一緒に取り組みましょう。</div>`
       :recCourse===1
       ?`<div style="margin:10px 0;padding:14px 16px;background:#fff8f0;border:1.5px solid #e08030;border-radius:10px;font-size:12px;color:#9a6a00;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}/${mp4c}点・生活機能リスク ${calcCLTotal().risk}/20点でした。身体機能・生活機能の一部に注意が必要な状態です。今から取り組むことで改善が期待できます。3ヵ月コースで一緒に取り組みましょう。</div>`
       :`<div style="margin:10px 0;padding:14px 16px;background:#f0fff4;border:1.5px solid #1a8a50;border-radius:10px;font-size:12px;color:#1a6a40;font-weight:600;line-height:1.8;">✅ 現在の状態は良好です。今の状態を維持するために、定期的な検診の継続をお勧めします。</div>`}
@@ -1810,13 +1809,21 @@ function p3BuildReport() {
     };
   }
 
-  const nm=document.getElementById('pt-name').value.trim()||'___________';
+  // Add consent from p3-name to S
+  S.consent = consentValue;
+  S.consentDate = consentDate;
+  // Update localStorage with consent
+  localStorage.setItem('frail_phase2', JSON.stringify(S));
+
+  // Name from Phase 1 localStorage
+  let nm='___________';
+  try{ const p1d=JSON.parse(localStorage.getItem('frail_phase1')||'{}'); if(p1d.name) nm=p1d.name; }catch(e){}
   const st=document.getElementById('pt-staff').value.trim()||'___';
   const nd=document.getElementById('next-date').value.trim()||'未定';
   const today=new Date();
   const ds=`${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
   const gl=S.gender==='male'?'男性':'女性';
-  const an=(S.age>=50&&S.age<=64)?'<br><span style="font-size:9px;color:#9abacc;">※AWGS 2025（50〜64歳）適用</span>':'';
+  const an=(S.age>=50&&S.age<=64)?'<span style="font-size:9px;color:#9abacc;">　※AWGS 2025（50〜64歳）適用</span>':'';
   document.getElementById('rmeta').innerHTML=`${S.pid}　${nm} 様　${gl}　${S.age}歳${an}<br>検診日：${ds}　担当：${st}　次回：${nd}`;
   document.getElementById('nxv').textContent=nd;
 
@@ -1882,7 +1889,7 @@ function exportCsv(type){
     const r=`${S.pid},${cDate},${S.age},${S.gender==='male'?'男':'女'},${skip.grip?'ND':gm.toFixed(1)},${skip.calf?'ND':cm.toFixed(1)},${skip.walk?'ND':ws},${skip.standup?'ND':S.standupSec},${skip.oneleg?'ND':S.oneLegSec},${skip.rsst?'ND':S.rsstCnt},${S.bmi.toFixed(1)},${S.mnaTotal},${j.sc},${j.vd},${psTotal},${clt.risk},${skipStr}`;
     csv=h+'\n'+r; fn=`frail_research_${S.pid}.csv`;
   }else{
-    const nm=document.getElementById('pt-name').value.trim()||'---';
+    let nm='---'; try{ const p1d=JSON.parse(localStorage.getItem('frail_phase1')||'{}'); if(p1d.name) nm=p1d.name; }catch(e){}
     const dt=new Date().toLocaleDateString('ja-JP');
     const h='ID,氏名,検診日,年齢,性別,握力kg,下腿周径cm,歩行速度m/s,立ち上がり秒,片足立ち秒,RSST回,BMI,MNA点,J-CHSスコア,判定,身体機能スコア,生活機能スコア,測定困難項目,学術同意';
     const r=`${S.pid},${nm},${dt},${S.age},${S.gender==='male'?'男':'女'},${skip.grip?'ND':gm.toFixed(1)},${skip.calf?'ND':cm.toFixed(1)},${skip.walk?'ND':ws},${skip.standup?'ND':S.standupSec},${skip.oneleg?'ND':S.oneLegSec},${skip.rsst?'ND':S.rsstCnt},${S.bmi.toFixed(1)},${S.mnaTotal},${j.sc},${j.vd},${psTotal},${clt.risk},${skipStr},${cs===true?1:0}`;
