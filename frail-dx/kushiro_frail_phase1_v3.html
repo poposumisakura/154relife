@@ -1,0 +1,318 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+#app { background: #f0f4f8; min-height: 600px; display: flex; flex-direction: column; align-items: center; }
+.screen { display: none; width: 100%; max-width: 780px; padding: 24px 20px; }
+.screen.active { display: flex; flex-direction: column; }
+.header {
+  background: #1a5fa8; color: white; padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 780px; border-radius: 14px 14px 0 0;
+}
+.header-title { font-size: 18px; font-weight: 600; }
+.header-sub { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+.progress-bar-wrap { width: 100%; max-width: 780px; background: #dde8f5; height: 8px; }
+.progress-bar { height: 8px; background: #1a5fa8; transition: width 0.4s ease; }
+
+.start-card { background: white; border-radius: 16px; padding: 28px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-top: 20px; }
+.hospital-logo { width: 56px; height: 56px; background: #1a5fa8; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 26px; }
+.start-title { font-size: 24px; font-weight: 700; color: #1a3a5c; text-align: center; margin-bottom: 4px; }
+.start-sub { font-size: 15px; color: #5a7a9a; text-align: center; margin-bottom: 24px; }
+
+.field-label { font-size: 17px; font-weight: 600; color: #1a3a5c; margin-bottom: 8px; display: block; }
+
+.text-input {
+  width: 100%; font-size: 28px; font-weight: 700; color: #1a3a5c;
+  text-align: center; padding: 14px; border: 2px solid #b0c8e8;
+  border-radius: 12px; background: #f0f6ff; outline: none; letter-spacing: 0.15em;
+  margin-bottom: 16px;
+}
+.text-input:focus { border-color: #1a5fa8; }
+
+.body-row { display: flex; gap: 12px; margin-bottom: 8px; }
+.body-col { flex: 1; }
+.body-input {
+  width: 100%; font-size: 26px; font-weight: 700; color: #1a3a5c;
+  text-align: center; padding: 12px 8px; border: 2px solid #b0c8e8;
+  border-radius: 12px; background: #f0f6ff; outline: none;
+  appearance: auto;
+}
+.body-input:focus { border-color: #1a5fa8; }
+.body-unit { text-align: center; font-size: 14px; color: #8aaac0; margin-top: 4px; }
+
+.bmi-badge {
+  border-radius: 12px; padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; transition: background 0.3s;
+}
+.bmi-label { font-size: 15px; color: #5a7a9a; }
+
+.btn-start {
+  width: 100%; padding: 20px; font-size: 24px; font-weight: 700;
+  background: #1a5fa8; color: white; border: none; border-radius: 14px;
+  cursor: pointer; transition: transform 0.1s;
+}
+.btn-start:active { transform: scale(0.98); }
+
+.q-wrap { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); flex: 1; }
+.q-category { background: #e8f0fb; padding: 10px 20px; font-size: 15px; font-weight: 600; color: #1a5fa8; display: flex; align-items: center; gap: 8px; }
+.q-number { font-size: 13px; color: #7a9ab8; margin-left: auto; }
+.q-illust { background: #f5f8ff; height: 120px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #e8eef8; font-size: 52px; }
+.q-text { padding: 22px 24px 16px; font-size: 25px; font-weight: 600; color: #1a3a5c; line-height: 1.5; min-height: 90px; }
+.q-hint { padding: 0 24px 16px; font-size: 15px; color: #6a8aaa; line-height: 1.6; }
+.btn-row { display: flex; gap: 12px; padding: 0 20px 20px; }
+.btn-yes, .btn-no {
+  flex: 1; padding: 26px 10px; font-size: 30px; font-weight: 800;
+  border: none; border-radius: 14px; cursor: pointer; transition: transform 0.12s; letter-spacing: 0.05em;
+}
+.btn-yes { background: #1a5fa8; color: white; }
+.btn-no  { background: #e03030; color: white; }
+.btn-yes:active, .btn-no:active { transform: scale(0.96); }
+.nav-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px; background: white; border-top: 1px solid #e0e8f0;
+  border-radius: 0 0 16px 16px; margin-top: -1px;
+}
+.btn-back { font-size: 15px; color: #7a9ab8; background: none; border: 1px solid #c0d0e0; border-radius: 10px; padding: 9px 16px; cursor: pointer; }
+.q-counter { font-size: 14px; color: #9abacc; }
+
+.complete-card { background: white; border-radius: 16px; padding: 32px 24px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-top: 20px; }
+.complete-title { font-size: 26px; font-weight: 700; color: #1a3a5c; margin-bottom: 8px; }
+.complete-sub { font-size: 16px; color: #5a7a9a; margin-bottom: 24px; line-height: 1.6; }
+.result-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e8eef8; font-size: 16px; }
+.result-label { color: #5a7a9a; }
+.result-val { font-weight: 700; color: #1a3a5c; font-size: 17px; }
+.badge-risk { color: #e03030; }
+.badge-ok   { color: #1a8a50; }
+.btn-next { width: 100%; padding: 18px; font-size: 19px; font-weight: 700; background: #1a5fa8; color: white; border: none; border-radius: 14px; cursor: pointer; margin-top: 20px; }
+</style>
+
+<div id="app">
+  <div class="header">
+    <div>
+      <div class="header-title">Kushiro Frail Digital Check</div>
+      <div class="header-sub" id="hdr-sub">釧路孝仁会記念病院 健診センター</div>
+    </div>
+    <div style="font-size:13px;opacity:0.7;" id="hdr-id"></div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="prog" style="width:0%"></div></div>
+
+  <!-- START -->
+  <div class="screen active" id="scr-start">
+    <div class="start-card">
+      <div class="hospital-logo">🏥</div>
+      <div class="start-title">フレイル検診</div>
+      <div class="start-sub">基本チェックリスト（24問）</div>
+
+      <span class="field-label">受診者番号</span>
+      <input class="text-input" id="pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
+
+      <span class="field-label">身長・体重
+        <span style="font-size:13px;font-weight:400;color:#8aaac0;">（BMIを自動計算）</span>
+      </span>
+      <div class="body-row">
+        <div class="body-col">
+          <input class="body-input" id="ht" type="number" value="160" min="100" max="220" step="0.5" inputmode="decimal" oninput="guardMin('ht',100); calcBmi()" onchange="guardMin('ht',100); calcBmi()" />
+          <div class="body-unit">身長 (cm)</div>
+        </div>
+        <div class="body-col">
+          <input class="body-input" id="wt" type="number" value="55" min="20" max="200" step="0.5" inputmode="decimal" oninput="guardMin('wt',20); calcBmi()" onchange="guardMin('wt',20); calcBmi()" />
+          <div class="body-unit">体重 (kg)</div>
+        </div>
+      </div>
+
+      <div class="bmi-badge" id="bmi-badge" style="background:#e8f0fb;">
+        <span class="bmi-label">BMI</span>
+        <span style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:28px;font-weight:800;" id="bmi-val">21.5</span>
+          <span style="font-size:15px;font-weight:600;" id="bmi-cat">普通体重</span>
+        </span>
+      </div>
+
+      <button class="btn-start" onclick="startCheck()">検診を開始する</button>
+    </div>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="scr-question" style="padding:0;">
+    <div class="q-wrap">
+      <div class="q-category">
+        <span id="q-cat-icon">🚌</span>
+        <span id="q-cat-name">運動・移動</span>
+        <span class="q-number" id="q-num">1 / 24</span>
+      </div>
+      <div class="q-illust" id="q-illust">🚌</div>
+      <div class="q-text"  id="q-text"></div>
+      <div class="q-hint"  id="q-hint"></div>
+      <div class="btn-row">
+        <button class="btn-yes" onclick="answer(false)">はい</button>
+        <button class="btn-no"  onclick="answer(true)">いいえ</button>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← 前の質問</button>
+      <span class="q-counter" id="q-ctr">回答済み: 0問</span>
+    </div>
+  </div>
+
+  <!-- COMPLETE -->
+  <div class="screen" id="scr-complete">
+    <div class="complete-card">
+      <div style="font-size:56px;margin-bottom:12px;">✅</div>
+      <div class="complete-title">問診完了</div>
+      <div class="complete-sub">基本チェックリスト24問が終わりました。<br>スタッフに端末をお渡しください。</div>
+      <div id="result-summary"></div>
+      <button class="btn-next" onclick="alert('【Phase 2】スタッフ測定パートへ\n次フェーズで実装されます。')">スタッフ測定パートへ →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QS = [
+  { cat:"運動・移動", icon:"🚌", e:"🚌", t:"バスや電車で一人で外出していますか",              h:"週1回以上、一人で公共交通機関を使って外出している場合は「はい」。",             r:false },
+  { cat:"運動・移動", icon:"🛒", e:"🛒", t:"日用品の買い物をしていますか",                    h:"自分で食料品や日用品を買い物できる場合は「はい」。",                           r:false },
+  { cat:"運動・移動", icon:"🏦", e:"🏦", t:"預貯金の出し入れをしていますか",                  h:"自分で銀行・郵便局などで預金の出し入れができる場合は「はい」。",               r:false },
+  { cat:"運動・移動", icon:"👥", e:"👥", t:"友人の家を訪ねることがありますか",                h:"友人や知人の家に月1回以上遊びに行くことがある場合は「はい」。",                 r:false },
+  { cat:"運動・移動", icon:"🤝", e:"🤝", t:"家族や友人の相談にのっていますか",                h:"家族や友人から悩み相談を受けたりアドバイスをすることがある場合は「はい」。",     r:false },
+  { cat:"転倒リスク", icon:"🪜", e:"🪜", t:"階段を手すりや壁をつたわらずに昇っていますか",   h:"手すりや壁を使わずに普通に階段を昇り降りできる場合は「はい」。",               r:false },
+  { cat:"転倒リスク", icon:"🪑", e:"🪑", t:"椅子から何もつかまらずに立ち上がれますか",       h:"テーブルや手すりなどを使わずに椅子から立ち上がれる場合は「はい」。",           r:false },
+  { cat:"転倒リスク", icon:"🚶", e:"🚶", t:"15分位続けて歩いていますか",                      h:"15分以上続けて歩くことができる場合は「はい」。",                               r:false },
+  { cat:"転倒リスク", icon:"😰", e:"😰", t:"この1年間に転んだことがありますか",               h:"過去1年間に転倒したことがある場合は「はい」。",                               r:true  },
+  { cat:"転倒リスク", icon:"😟", e:"😟", t:"転倒に対する不安は大きいですか",                  h:"転んでしまうことに対して不安を感じている場合は「はい」。",                     r:true  },
+  { cat:"栄養・体重", icon:"⚖️", e:"⚖️", t:"6ヶ月間で2〜3kg以上の体重減少がありましたか",   h:"ダイエット以外の理由で過去6ヶ月に体重が2〜3kg以上減った場合は「はい」。",       r:true  },
+  { cat:"口腔・嚥下", icon:"🦷", e:"🦷", t:"半年前に比べて固いものが食べにくくなりましたか", h:"以前より硬い食べ物（肉など）が食べにくくなった場合は「はい」。",               r:true  },
+  { cat:"口腔・嚥下", icon:"🍵", e:"🍵", t:"お茶や汁物等でむせることがありますか",            h:"お茶・みそ汁・水などを飲むときにむせることがある場合は「はい」。",             r:true  },
+  { cat:"口腔・嚥下", icon:"😐", e:"😐", t:"口の渇きが気になりますか",                        h:"口の中が乾燥する・口が渇くと感じることが多い場合は「はい」。",                 r:true  },
+  { cat:"閉じこもり", icon:"🚪", e:"🚪", t:"週に1回以上は外出していますか",                   h:"週に1回以上外に出かけている場合は「はい」。",                                 r:false },
+  { cat:"閉じこもり", icon:"🏠", e:"🏠", t:"昨年と比べて外出の回数が減っていますか",          h:"1年前と比べて外出する回数が明らかに減った場合は「はい」。",                   r:true  },
+  { cat:"認知機能",   icon:"🧩", e:"🧩", t:"「いつも同じ事を聞く」などの物忘れがあると言われますか", h:"家族や友人から「同じことを何度も聞く」などと言われることがある場合は「はい」。", r:true },
+  { cat:"認知機能",   icon:"📱", e:"📱", t:"自分で電話番号を調べて電話をかけていますか",      h:"自分で電話番号を調べて電話をかけることができる場合は「はい」。",               r:false },
+  { cat:"認知機能",   icon:"📅", e:"📅", t:"今日が何月何日かわからないときがありますか",      h:"今日の日付（月・日）がわからなくなることがある場合は「はい」。",               r:true  },
+  { cat:"うつ・気力", icon:"😔", e:"😔", t:"（ここ2週間）毎日の生活に充実感がない",           h:"最近2週間、毎日の生活に充実感や満足感が感じられない場合は「はい」。",           r:true  },
+  { cat:"うつ・気力", icon:"😢", e:"😢", t:"（ここ2週間）楽しんでいたことが楽しめなくなった", h:"最近2週間、趣味や好きなことが楽しめなくなった場合は「はい」。",               r:true  },
+  { cat:"うつ・気力", icon:"😓", e:"😓", t:"（ここ2週間）以前楽にできていたことがおっくうに感じられる", h:"最近2週間、以前は簡単にできていたことが面倒に感じる場合は「はい」。", r:true },
+  { cat:"うつ・気力", icon:"😕", e:"😕", t:"（ここ2週間）自分が役に立つ人間だと思えない",    h:"最近2週間、自分は役に立てていない・必要とされていないと感じる場合は「はい」。", r:true },
+  { cat:"うつ・気力", icon:"😞", e:"😞", t:"（ここ2週間）わけもなく疲れたような感じがする",  h:"最近2週間、特に理由もないのに疲れた感じがする場合は「はい」。",               r:true  },
+];
+
+let cur = 0, answers = new Array(QS.length).fill(null), pid = "", bmiValue = null, htVal = 160, wtVal = 55;
+
+function guardMin(id, minVal) {
+  const el = document.getElementById(id);
+  const v = parseFloat(el.value);
+  if (!isNaN(v) && v < minVal) el.value = minVal;
+}
+
+function calcBmi() {
+  const h = parseFloat(document.getElementById('ht').value);
+  const w = parseFloat(document.getElementById('wt').value);
+  const valEl = document.getElementById('bmi-val');
+  const catEl = document.getElementById('bmi-cat');
+  const badge = document.getElementById('bmi-badge');
+  if (h >= 100 && w >= 20) {
+    const b = w / ((h / 100) * (h / 100));
+    bmiValue = b; htVal = h; wtVal = w;
+    valEl.textContent = b.toFixed(1);
+    let label, color, bg;
+    if      (b < 18.5) { label = "低体重（やせ）"; color = "#e03030"; bg = "#fff0f0"; }
+    else if (b < 25.0) { label = "普通体重";       color = "#1a8a50"; bg = "#f0fff4"; }
+    else if (b < 30.0) { label = "肥満（1度）";    color = "#e08030"; bg = "#fff8f0"; }
+    else               { label = "肥満（2度以上）"; color = "#c03030"; bg = "#fff0f0"; }
+    valEl.style.color = color; catEl.style.color = color;
+    catEl.textContent = label; badge.style.background = bg;
+  } else {
+    bmiValue = null;
+    valEl.textContent = "---"; valEl.style.color = "#9abacc";
+    catEl.textContent = ""; badge.style.background = "#e8f0fb";
+  }
+}
+
+function startCheck() {
+  pid = document.getElementById('pid').value.trim();
+  if (!pid) { alert('受診者番号を入力してください'); return; }
+  document.getElementById('hdr-id').textContent = '受診者：' + pid;
+  document.getElementById('hdr-sub').textContent = '問診パート（基本チェックリスト）';
+  switchScreen('scr-question');
+  showQ(0);
+}
+
+function showQ(idx) {
+  const q = QS[idx];
+  document.getElementById('q-cat-icon').textContent = q.icon;
+  document.getElementById('q-cat-name').textContent = q.cat;
+  document.getElementById('q-num').textContent = (idx + 1) + ' / ' + QS.length;
+  document.getElementById('q-illust').textContent = q.e;
+  document.getElementById('q-text').textContent = q.t;
+  document.getElementById('q-hint').textContent = q.h;
+  document.getElementById('prog').style.width = Math.round((idx / QS.length) * 100) + '%';
+  document.getElementById('q-ctr').textContent = '回答済み: ' + answers.filter(a => a !== null).length + '問';
+}
+
+function answer(isNo) {
+  answers[cur] = isNo;
+  cur++;
+  if (cur >= QS.length) showComplete();
+  else showQ(cur);
+}
+
+function goBack() {
+  if (cur === 0) { switchScreen('scr-start'); return; }
+  cur--;
+  showQ(cur);
+}
+
+function showComplete() {
+  switchScreen('scr-complete');
+  document.getElementById('prog').style.width = '40%';
+  document.getElementById('hdr-sub').textContent = '問診完了 → スタッフ測定へ';
+
+  // リスク集計（回答ベース）
+  const cats = {};
+  QS.forEach((q, i) => {
+    if (!cats[q.cat]) cats[q.cat] = { risk: 0, total: 0 };
+    cats[q.cat].total++;
+    // riskOn判定：r=trueの質問は「はい（isNo=false → answer=false）」でリスク
+    // r=falseの質問は「いいえ（isNo=true → answer=true）」でリスク
+    const isRisk = q.r ? (answers[i] === false) : (answers[i] === true);
+    if (isRisk) cats[q.cat].risk++;
+  });
+
+  // BMIリスク判定を「栄養・体重」カテゴリに追加
+  if (!cats['栄養・体重']) cats['栄養・体重'] = { risk: 0, total: 0 };
+  cats['栄養・体重'].total += 1;
+  if (bmiValue !== null && bmiValue < 18.5) cats['栄養・体重'].risk += 1;
+
+  let totalRisk = 0;
+  let html = '';
+  for (const [cat, v] of Object.entries(cats)) {
+    const isRisk = v.risk > 0;
+    if (isRisk) totalRisk += v.risk;
+    html += `<div class="result-row">
+      <span class="result-label">${cat}</span>
+      <span class="result-val ${isRisk ? 'badge-risk' : 'badge-ok'}">${isRisk ? '⚠️' : '✓'} ${v.risk}/${v.total}項目</span>
+    </div>`;
+  }
+
+  if (bmiValue !== null) {
+    html += `<div class="result-row">
+      <span class="result-label">BMI（参考）</span>
+      <span class="result-val" style="color:${bmiValue < 18.5 ? '#e03030' : '#1a8a50'}">${bmiValue.toFixed(1)}　${bmiValue < 18.5 ? '⚠️ 低体重' : '✓ 正常範囲以上'}</span>
+    </div>`;
+  }
+
+  html += `<div class="result-row" style="border-bottom:none;margin-top:6px;padding-top:14px;border-top:2px solid #e0e8f0;">
+    <span class="result-label" style="font-weight:700;font-size:16px;">リスク項目 合計</span>
+    <span class="result-val" style="font-size:22px;color:${totalRisk >= 8 ? '#e03030' : totalRisk >= 4 ? '#e08030' : '#1a8a50'}">${totalRisk} 項目</span>
+  </div>`;
+
+  document.getElementById('result-summary').innerHTML = html;
+}
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// 初期BMI計算
+calcBmi();
+</script>
