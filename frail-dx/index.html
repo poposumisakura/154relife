@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kushiro Frail Digital Check | 釧路孝仁会記念病院 高度健診センター</title>
-<!-- © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT -->
+<title>Kojinkai Kushiro Frail Digital Check | 釧路孝仁会記念病院 高度健診センター</title>
+<!-- © 2026 154 Re-Life Design. All rights reserved. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 /* ============================================================
@@ -334,7 +334,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   <!-- Shared header -->
   <div class="header">
     <div>
-      <div class="header-title">Kushiro Frail Digital Check</div>
+      <div class="header-title">Kojinkai Kushiro Frail Digital Check</div>
       <div class="header-sub" id="hdr-sub">釧路孝仁会記念病院 高度健診センター</div>
     </div>
     <div style="text-align:right;">
@@ -416,7 +416,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   <div class="screen" id="p2-start">
     <div class="start-card">
       <div class="hospital-logo">🏥</div>
-      <div class="start-title">Kushiro Frail Digital Check</div>
+      <div class="start-title">Kojinkai Kushiro Frail Digital Check</div>
       <div class="start-sub">受診者情報・身体計測の入力</div>
       <span class="field-label">受診者番号</span>
       <input class="text-input" id="p2-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
@@ -919,7 +919,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;"><span style="color:#7a9ab8;">初回 7.2点</span> → <span style="color:#1a3a6a;">6.1点</span> <span style="background:#d0f0da;color:#1a8a50;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;">改善</span></div>
           </div>
           <div style="flex:1;background:#fff8f0;border-radius:10px;padding:12px 14px;border:1.5px solid #f0d0a0;">
-            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #f0dcc8;">コース③　フレイル予防プログラム（6ヵ月）</div>
+            <div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #f0dcc8;">コース③　6ヵ月コース</div>
             <div style="font-size:11px;color:#5a7a9a;margin-bottom:1px;">参加者数</div>
             <div style="font-size:20px;font-weight:800;color:#1a3a6a;margin-bottom:2px;">18<span style="font-size:11px;color:#9abacc;"> 名</span><span style="font-size:12px;color:#7a9ab8;font-weight:600;margin-left:6px;">（35%）</span></div>
             <div style="font-size:10px;color:#9abacc;margin-bottom:6px;">累計受診者52名中</div>
@@ -963,13 +963,13 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
 
   <!-- Global Footer -->
   <div style="width:100%;max-width:860px;text-align:center;padding:16px 20px 24px;font-size:10px;color:#9abacc;">
-    © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT
+    © 2026 154 Re-Life Design. All rights reserved.
   </div>
 
 </div>
 
 <script>
-/* © 2026 154 Re-Life Design. All rights reserved. Produced by Kimihide Murakami, PT */
+/* © 2026 154 Re-Life Design. All rights reserved. */
 
 // ============================================================
 // Global screen navigation
@@ -1786,19 +1786,23 @@ function buildCourse(jchs) {
   const courses=[
     {n:'コース①　単発検診',tg:'良好（身体・生活ともに問題なし）',p:'¥5,000',pd:'1回完結',f:['フレイル判定全評価＋チャート','当日iPad結果表示','次回検診まで自主管理'],r:recCourse===0},
     {n:'コース②　3ヶ月コース',tg:'低下傾向（身体機能スコア注意 または 生活機能低下）',p:'¥12,000',pd:'3ヶ月・10回',f:['初回検診込み','集団プログラム 週1回×10回','3ヶ月後チャート比較'],r:recCourse===1},
-    {n:'コース③　フレイル予防プログラム（6ヵ月）',tg:'低下（身体機能スコア低下 または 複合低下）',p:'¥20,000',pd:'6ヶ月・20回',f:['初回検診込み','集団プログラム 週1回×20回','3・6ヶ月後チャート比較'],r:recCourse===2},
+    {n:'コース③　6ヵ月コース',tg:'低下（身体機能スコア低下 または 複合低下）',p:'¥20,000',pd:'6ヶ月・20回',f:['初回検診込み','集団プログラム 週1回×20回','3・6ヶ月後チャート比較'],r:recCourse===2},
   ];
   const sc=jchs.sc, jTotal2=jchs.its.filter(i=>!i.skip).length;
   document.getElementById('crs').innerHTML=`
     <div class="crs-t">🏃 推奨プログラム（複合判定に基づく）</div>
     <div style="font-size:10px;color:#7a9ab8;margin-bottom:8px;">J-CHS <span style="color:#1a3a5c;">${jchs.sc}<span style="font-size:10px;color:#9abacc;">/${jTotal2}項目</span></span> <strong style="color:${jchs.sc>=3?'#e03030':jchs.sc>=1?'#e08030':'#1a8a50'};">${jchs.vd}</strong>　身体：<span style="color:#1a3a5c;">${psT4c}<span style="font-size:10px;color:#9abacc;">/${mp4c}</span></span> <strong style="color:${physLevel==='low'?'#e03030':physLevel==='caution'?'#e08030':'#1a8a50'};">${physLevel==='low'?'🚩低下':physLevel==='caution'?'⚠️注意':'✓良好'}</strong>　生活：<span style="color:#1a3a5c;">${calcCLTotal().risk}<span style="font-size:10px;color:#9abacc;">/20</span></span> <strong style="color:${lifeRisk?'#e03030':lifeCaution?'#e08030':'#1a8a50'};">${lifeRisk?'🚩低下':lifeCaution?'⚠️注意':'✓良好'}</strong>
+    ${recCourse===2
+      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#c03030;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}点・生活機能リスク ${calcCLTotal().risk}点という結果でした。複数の機能低下が重なっており、早期の集中的な介入が効果的です。6ヵ月コースへのご参加をお勧めします。</div>`
+      :recCourse===1
+      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff8f0;border:1.5px solid #e08030;border-radius:10px;font-size:12px;color:#9a6a00;font-weight:600;line-height:1.8;">📌 身体機能・生活機能の一部に注意が必要な状態です。今から取り組むことで改善が期待できます。3ヵ月コースで一緒に取り組みましょう。</div>`
+      :`<div style="margin:10px 0;padding:14px 16px;background:#f0fff4;border:1.5px solid #1a8a50;border-radius:10px;font-size:12px;color:#1a6a40;font-weight:600;line-height:1.8;">✅ 現在の状態は良好です。今の状態を維持するために、定期的な検診の継続をお勧めします。</div>`}
     <div class="ccs">${courses.map(c=>`<div class="ccard${c.r?' rec':''}">
       ${c.r?'<div class="rb">★ 推奨</div>':''}
       <div class="cn">${c.n}</div><div class="ctg">${c.tg}</div>
       <div class="cp">${c.p}</div><div class="cpd">${c.pd}</div>
       <div>${c.f.map(f=>`<div class="cf">・${f}</div>`).join('')}</div>
     </div>`).join('')}</div>
-    ${recCourse===2?'<div style="margin-top:10px;padding:12px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#c03030;font-weight:600;line-height:1.8;">📌 担当スタッフにご相談ください。専用の6ヵ月プログラムをご案内いたします。</div>':''}
     <div style="font-size:9px;color:#9abacc;margin-top:5px;">※自費診療（保険外）。完全予約制。下記公式LINEまたはお電話でお申し込みください。</div>`;
 }
 
