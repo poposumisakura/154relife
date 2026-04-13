@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kojinkai Kushiro Frail Digital Check | 釧路孝仁会記念病院 高度健診センター</title>
-<!-- © 2026 154 Re-Life Design. All rights reserved. -->
+<title>Kojinkai Frail Digital Check | 釧路孝仁会記念病院 高度健診センター</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 /* ============================================================
@@ -275,11 +274,11 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
 .bex-r { background: #1a3a6a; color: white; }
 
 @media print {
-  @page { margin: 10mm 5mm; size: A4; }
+  @page { size: A4; margin: 0; }
   .acts,.header,.progress-bar-wrap,.tabs,.ctog { display: none!important; }
   #t-kpi { display: none!important; }
   #p3-report { padding: 0!important; }
-  #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; }
+  #rep { box-sizing: border-box; box-shadow: none; border-radius: 0; padding-top: 5mm; }
   #rep { font-size: 13px; }
   .vls { font-size: 11px; }
   .vt { font-size: 20px; }
@@ -326,6 +325,8 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   .cp { font-size: 14px; }
   .line-info { page-break-inside: avoid; padding: 5px 14px; }
   .nx,.rf { page-break-inside: avoid; }
+  .rf-l { display: none!important; }
+  .global-footer { display: none!important; }
 }
 </style>
 </head>
@@ -334,7 +335,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   <!-- Shared header -->
   <div class="header">
     <div>
-      <div class="header-title">Kojinkai Kushiro Frail Digital Check</div>
+      <div class="header-title">Kojinkai Frail Digital Check</div>
       <div class="header-sub" id="hdr-sub">釧路孝仁会記念病院 高度健診センター</div>
     </div>
     <div style="text-align:right;">
@@ -354,6 +355,16 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
       <div class="start-sub">基本チェックリスト（24問）</div>
       <span class="field-label">受診者番号</span>
       <input class="text-input" id="p1-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
+      <span class="field-label">年齢</span>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;">
+        <input class="body-input" id="p1-age" type="number" value="70" min="40" max="100" step="1" inputmode="numeric" style="max-width:120px;" />
+        <span style="font-size:16px;color:#5a7a9a;font-weight:600;">歳</span>
+      </div>
+      <span class="field-label">性別</span>
+      <div class="gender-row">
+        <button class="gender-btn" id="btn-male" onclick="p1SetGender('male')">♂　男性</button>
+        <button class="gender-btn" id="btn-female" onclick="p1SetGender('female')">♀　女性</button>
+      </div>
       <span class="field-label">身長・体重 <span style="font-size:13px;font-weight:400;color:#8aaac0;">（BMIを自動計算）</span></span>
       <div class="body-row">
         <div class="body-col">
@@ -416,54 +427,22 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   <div class="screen" id="p2-start">
     <div class="start-card">
       <div class="hospital-logo">🏥</div>
-      <div class="start-title">Kojinkai Kushiro Frail Digital Check</div>
-      <div class="start-sub">受診者情報・身体計測の入力</div>
-      <span class="field-label">受診者番号</span>
-      <input class="text-input" id="p2-pid" type="text" placeholder="例：001" maxlength="6" inputmode="numeric" />
-      <span class="field-label">年齢</span>
-      <div class="num-wrap" style="max-width:200px;margin:0 auto 16px;">
-        <input class="num-text" id="p2-age" type="text" inputmode="numeric" value="70" oninput="p2AgeValue=parseInt(this.value)||70">
-        <div class="spin-col">
-          <button class="spin-btn up" onmousedown="ss('p2-age',1,1,40,100,0,null)" onmouseup="stopS()" ontouchstart="ss('p2-age',1,1,40,100,0,null)" ontouchend="stopS()">▲</button>
-          <button class="spin-btn down" onmousedown="ss('p2-age',1,-1,40,100,0,null)" onmouseup="stopS()" ontouchstart="ss('p2-age',1,-1,40,100,0,null)" ontouchend="stopS()">▼</button>
+      <div class="start-title">スタッフ測定パート</div>
+      <div class="start-sub">Phase 1で入力された受診者情報を確認してください</div>
+      <!-- Phase1から引き継いだ情報（読み取り専用表示） -->
+      <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:700;color:#1a5fa8;margin-bottom:10px;">📋 受診者情報（Phase 1より自動引き継ぎ）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:15px;color:#1a3a5c;">
+          <div>受診者番号：<strong id="p2-pid-display">---</strong></div>
+          <div>年齢：<strong id="p2-age-display">---</strong>歳</div>
+          <div>性別：<strong id="p2-gender-display">---</strong></div>
+          <div>BMI：<strong id="p2-bmi-display">---</strong></div>
+          <div>身長：<strong id="p2-ht-display">---</strong> cm</div>
+          <div>体重：<strong id="p2-wt-display">---</strong> kg</div>
         </div>
       </div>
-      <div class="body-unit" style="margin-top:-12px;margin-bottom:16px;">歳</div>
-      <span class="field-label">性別</span>
-      <div class="gender-row">
-        <button class="gender-btn" id="btn-male" onclick="setGender('male')">♂　男性</button>
-        <button class="gender-btn" id="btn-female" onclick="setGender('female')">♀　女性</button>
-      </div>
-      <span class="field-label">身長・体重 <span style="font-size:13px;font-weight:400;color:#8aaac0;">（BMI自動計算・小数点1桁）</span></span>
-      <div class="body-row">
-        <div class="body-col">
-          <div class="num-wrap">
-            <input class="num-text" id="p2-ht" type="text" inputmode="decimal" value="160.0" oninput="p2CalcBmi()" onchange="p2CalcBmi()">
-            <div class="spin-col">
-              <button class="spin-btn up" onmousedown="ss('p2-ht',0.1,1,100,220,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-ht',0.1,1,100,220,1,'p2CalcBmi')" ontouchend="stopS()">▲</button>
-              <button class="spin-btn down" onmousedown="ss('p2-ht',0.1,-1,100,220,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-ht',0.1,-1,100,220,1,'p2CalcBmi')" ontouchend="stopS()">▼</button>
-            </div>
-          </div>
-          <div class="body-unit">身長 (cm)</div>
-        </div>
-        <div class="body-col">
-          <div class="num-wrap">
-            <input class="num-text" id="p2-wt" type="text" inputmode="decimal" value="55.0" oninput="p2CalcBmi()" onchange="p2CalcBmi()">
-            <div class="spin-col">
-              <button class="spin-btn up" onmousedown="ss('p2-wt',0.1,1,20,200,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-wt',0.1,1,20,200,1,'p2CalcBmi')" ontouchend="stopS()">▲</button>
-              <button class="spin-btn down" onmousedown="ss('p2-wt',0.1,-1,20,200,1,'p2CalcBmi')" onmouseup="stopS()" ontouchstart="ss('p2-wt',0.1,-1,20,200,1,'p2CalcBmi')" ontouchend="stopS()">▼</button>
-            </div>
-          </div>
-          <div class="body-unit">体重 (kg)</div>
-        </div>
-      </div>
-      <div class="bmi-badge" id="p2-bmi-badge" style="background:#f0fff4;">
-        <span style="font-size:15px;color:#5a7a9a;">BMI</span>
-        <span style="display:flex;align-items:baseline;gap:8px;">
-          <span style="font-size:28px;font-weight:800;color:#1a8a50;" id="p2-bmi-val">21.5</span>
-          <span style="font-size:15px;font-weight:600;color:#1a8a50;" id="p2-bmi-cat">普通体重</span>
-        </span>
-      </div>
+      <!-- hidden inputs for JS compatibility -->
+      <input type="hidden" id="p2-pid"><input type="hidden" id="p2-age"><input type="hidden" id="p2-ht"><input type="hidden" id="p2-wt">
       <!-- 研究同意書 -->
       <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
         <div style="font-size:13px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">📋 学術研究へのデータ使用に関するご説明と同意</div>
@@ -852,7 +831,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
         <div class="nx"><div class="nxl">次回検診予定日</div><div class="nxv" id="nxv">未定</div></div>
         <div class="rf">
           <div class="rf-l">釧路孝仁会記念病院　高度健診センター</div>
-          <div class="rf-r">© 2026 154 Re-Life Design. All rights reserved.</div>
+          <div class="rf-r" style="flex:1;text-align:center;">© 2026 154 Re-Life Design. All rights reserved.</div>
         </div>
       </div>
     </div>
@@ -962,15 +941,13 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   </div>
 
   <!-- Global Footer -->
-  <div style="width:100%;max-width:860px;text-align:center;padding:16px 20px 24px;font-size:10px;color:#9abacc;">
+  <div class="global-footer" style="width:100%;max-width:860px;text-align:center;padding:16px 20px 24px;font-size:10px;color:#9abacc;">
     © 2026 154 Re-Life Design. All rights reserved.
   </div>
 
 </div>
 
 <script>
-/* © 2026 154 Re-Life Design. All rights reserved. */
-
 // ============================================================
 // Global screen navigation
 // ============================================================
@@ -1020,7 +997,13 @@ const QS = [
   { cat:"うつ・気力", icon:"😞", e:"😞", t:"（ここ2週間）わけもなく疲れたような感じがする",  h:"最近2週間、特に理由もないのに疲れた感じがする場合は「はい」。",               r:true  },
 ];
 
-let p1Cur = 0, p1Answers = new Array(QS.length).fill(null), p1Pid = "", p1BmiValue = null, p1HtVal = 160, p1WtVal = 55;
+let p1Cur = 0, p1Answers = new Array(QS.length).fill(null), p1Pid = "", p1BmiValue = null, p1HtVal = 160, p1WtVal = 55, p1AgeValue = 70, p1Gender = '';
+
+function p1SetGender(g) {
+  p1Gender = g;
+  document.getElementById('btn-male').className = 'gender-btn' + (g === 'male' ? ' sel-m' : '');
+  document.getElementById('btn-female').className = 'gender-btn' + (g === 'female' ? ' sel-f' : '');
+}
 
 function p1GuardMin(id, minVal) {
   const el = document.getElementById(id);
@@ -1055,7 +1038,9 @@ function p1CalcBmi() {
 function p1StartCheck() {
   p1Pid = document.getElementById('p1-pid').value.trim();
   if (!p1Pid) { alert('受診者番号を入力してください'); return; }
-  document.getElementById('hdr-id').textContent = '受診者：' + p1Pid;
+  p1AgeValue = parseInt(document.getElementById('p1-age').value) || 70;
+  if (!p1Gender) { alert('性別を選択してください'); return; }
+  document.getElementById('hdr-id').textContent = (p1Gender === 'male' ? '♂' : '♀') + ' ' + p1Pid;
   document.getElementById('hdr-sub').textContent = '問診パート（基本チェックリスト）';
   go('p1-question');
   p1ShowQ(0);
@@ -1121,6 +1106,8 @@ function goToPhase2() {
   // Save Phase 1 data to localStorage
   const p1Data = {
     pid: p1Pid,
+    age: p1AgeValue,
+    gender: p1Gender,
     ht: p1HtVal,
     wt: p1WtVal,
     bmi: p1BmiValue,
@@ -1128,13 +1115,26 @@ function goToPhase2() {
   };
   localStorage.setItem('frail_phase1', JSON.stringify(p1Data));
 
-  // Pre-fill Phase 2 fields
+  // Set Phase 2 hidden fields from Phase 1
   document.getElementById('p2-pid').value = p1Pid;
+  document.getElementById('p2-age').value = p1AgeValue;
   document.getElementById('p2-ht').value = p1HtVal.toFixed ? p1HtVal.toFixed(1) : p1HtVal;
   document.getElementById('p2-wt').value = p1WtVal.toFixed ? p1WtVal.toFixed(1) : p1WtVal;
-  p2CalcBmi();
 
-  document.getElementById('hdr-sub').textContent = '受診者情報入力';
+  // Auto-set Phase 2 internal state
+  gender = p1Gender;
+  p2AgeValue = p1AgeValue;
+  p2BmiValue = p1BmiValue;
+
+  // Update display panel
+  document.getElementById('p2-pid-display').textContent = p1Pid;
+  document.getElementById('p2-age-display').textContent = p1AgeValue;
+  document.getElementById('p2-gender-display').textContent = p1Gender === 'male' ? '男性' : '女性';
+  document.getElementById('p2-ht-display').textContent = p1HtVal.toFixed ? p1HtVal.toFixed(1) : p1HtVal;
+  document.getElementById('p2-wt-display').textContent = p1WtVal.toFixed ? p1WtVal.toFixed(1) : p1WtVal;
+  document.getElementById('p2-bmi-display').textContent = p1BmiValue ? p1BmiValue.toFixed(1) : '---';
+
+  document.getElementById('hdr-sub').textContent = 'スタッフ測定パート';
   go('p2-start');
 }
 
@@ -1254,18 +1254,9 @@ function setGender(g){
 }
 
 function p2CalcBmi(){
+  // BMI is now set from Phase 1 via goToPhase2(); this is kept for compatibility
   const h=parseFloat(document.getElementById('p2-ht').value), w=parseFloat(document.getElementById('p2-wt').value);
-  const ve=document.getElementById('p2-bmi-val'), ce=document.getElementById('p2-bmi-cat'), b=document.getElementById('p2-bmi-badge');
-  if(h>=100&&w>=20){
-    const bmi=w/((h/100)*(h/100)); p2BmiValue=bmi;
-    ve.textContent=bmi.toFixed(1);
-    let lb,col,bg;
-    if(bmi<18.5){lb='低体重（やせ）';col='#e03030';bg='#fff0f0';}
-    else if(bmi<25){lb='普通体重';col='#1a8a50';bg='#f0fff4';}
-    else if(bmi<30){lb='肥満（1度）';col='#e08030';bg='#fff8f0';}
-    else{lb='肥満（2度以上）';col='#c03030';bg='#fff0f0';}
-    ve.style.color=col;ce.style.color=col;ce.textContent=lb;b.style.background=bg;
-  }
+  if(h>=100&&w>=20){ p2BmiValue=w/((h/100)*(h/100)); }
 }
 
 // Stopwatch
@@ -1298,14 +1289,8 @@ function stopSW(key){
 }
 
 function startMeas(){
-  const pid=document.getElementById('p2-pid').value.trim();
-  if(!pid){alert('受診者番号を入力してください');return;}
-  if(!gender){alert('性別を選択してください');return;}
   if(consentValue===null){alert('研究同意の選択をお願いします');return;}
-  p2AgeValue=parseInt(document.getElementById('p2-age').value)||70;
   const cut=gripCutoff(), lbl=gripCutLabel();
-  document.getElementById('hdr-id').textContent=(gender==='male'?'♂':'♀')+' '+pid;
-  document.getElementById('hdr-sub').textContent='スタッフ測定パート';
   const stdEl=document.getElementById('grip-std-text');
   if(stdEl)stdEl.textContent=`基準値：${lbl}`;
   go('scr-grip'); judgeGrip(); judgeCalf();
@@ -1795,7 +1780,7 @@ function buildCourse(jchs) {
     ${recCourse===2
       ?`<div style="margin:10px 0;padding:14px 16px;background:#fff0f0;border:1.5px solid #e03030;border-radius:10px;font-size:12px;color:#c03030;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}点・生活機能リスク ${calcCLTotal().risk}点という結果でした。複数の機能低下が重なっており、早期の集中的な介入が効果的です。6ヵ月コースへのご参加をお勧めします。</div>`
       :recCourse===1
-      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff8f0;border:1.5px solid #e08030;border-radius:10px;font-size:12px;color:#9a6a00;font-weight:600;line-height:1.8;">📌 身体機能・生活機能の一部に注意が必要な状態です。今から取り組むことで改善が期待できます。3ヵ月コースで一緒に取り組みましょう。</div>`
+      ?`<div style="margin:10px 0;padding:14px 16px;background:#fff8f0;border:1.5px solid #e08030;border-radius:10px;font-size:12px;color:#9a6a00;font-weight:600;line-height:1.8;">📌 今回の検診では、J-CHS ${jchs.sc}項目該当・身体機能スコア ${psT4c}/${mp4c}点・生活機能リスク ${calcCLTotal().risk}/20点でした。身体機能・生活機能の一部に注意が必要な状態です。今から取り組むことで改善が期待できます。3ヵ月コースで一緒に取り組みましょう。</div>`
       :`<div style="margin:10px 0;padding:14px 16px;background:#f0fff4;border:1.5px solid #1a8a50;border-radius:10px;font-size:12px;color:#1a6a40;font-weight:600;line-height:1.8;">✅ 現在の状態は良好です。今の状態を維持するために、定期的な検診の継続をお勧めします。</div>`}
     <div class="ccs">${courses.map(c=>`<div class="ccard${c.r?' rec':''}">
       ${c.r?'<div class="rb">★ 推奨</div>':''}
@@ -1832,7 +1817,7 @@ function p3BuildReport() {
   const ds=`${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
   const gl=S.gender==='male'?'男性':'女性';
   const an=(S.age>=50&&S.age<=64)?'<br><span style="font-size:9px;color:#9abacc;">※AWGS 2025（50〜64歳）適用</span>':'';
-  document.getElementById('rmeta').innerHTML=`受診者番号：${S.pid}<br>氏名：${nm} 様<br>性別：${gl}　年齢：${S.age}歳<br>検診日：${ds}${an}<br>担当者：${st}`;
+  document.getElementById('rmeta').innerHTML=`${S.pid}　${nm} 様　${gl}　${S.age}歳${an}<br>検診日：${ds}　担当：${st}　次回：${nd}`;
   document.getElementById('nxv').textContent=nd;
 
   const j=calcJCHS();
@@ -1920,7 +1905,6 @@ function showTab(id, btn) {
 // Init
 // ============================================================
 p1CalcBmi();
-p2CalcBmi();
 </script>
 </body>
 </html>
