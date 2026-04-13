@@ -275,6 +275,7 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
 
 @media print {
   @page { size: A4; margin: 10mm 8mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .acts,.header,.progress-bar-wrap,.tabs,.ctog { display: none!important; }
   #t-kpi { display: none!important; }
   #p3-report { padding: 0!important; }
@@ -303,10 +304,9 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
   .vcrit { padding: 5px 8px; font-size: 9px; }
   .jrow { page-break-inside: avoid; flex-wrap: wrap; padding: 4px 14px; }
   .ji { padding: 3px 6px; }
-  .charts { display: flex!important; page-break-inside: avoid; }
-  .cc { flex: 1; padding: 4px 4px; }
-  .cc canvas { max-height: 200px!important; }
-  .cc { overflow: visible; }
+  .charts { display: flex!important; page-break-inside: avoid; max-width: 100%; overflow: hidden; }
+  .cc { flex: 1; padding: 4px 4px; min-width: 0; max-width: 50%; overflow: hidden; }
+  .cc canvas { max-height: 200px!important; max-width: 100%!important; width: 100%!important; }
   .cc-t { font-size: 10px; }
   .cc-s { font-size: 8px; }
   .leg { font-size: 8px; }
@@ -750,13 +750,14 @@ body { background: #f0f4f8; font-family: 'Hiragino Sans','Yu Gothic',sans-serif;
       <!-- 学術研究同意書 -->
       <div style="background:#f5f8ff;border:1.5px solid #b0c8e8;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
         <div style="font-size:13px;font-weight:700;color:#1a3a5c;margin-bottom:6px;">📋 学術研究へのデータ使用に関するご説明と同意</div>
-        <div style="font-size:12px;color:#5a7a9a;line-height:1.7;margin-bottom:10px;">本検診で得られた測定データは、個人が特定されない統計情報として、地域のフレイル対策向上を目的とした学術研究・学会発表に活用させていただく場合があります。<br><span style="font-size:11px;color:#8aaac0;">研究責任者：村上公英（理学療法士）</span></div>
+        <div style="font-size:12px;color:#5a7a9a;line-height:1.7;margin-bottom:10px;">本検診で得られた測定データは、個人が特定されない統計情報として、地域のフレイル対策向上を目的とした学術研究・学会発表に活用させていただく場合があります。<br><span style="font-size:11px;color:#8aaac0;">研究責任者：村上公英（理学療法士・釧路孝仁会記念病院）</span></div>
         <div style="display:flex;gap:10px;">
           <div id="consent-yes" onclick="setConsent(true)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意する</div>
           <div id="consent-no"  onclick="setConsent(false)" style="flex:1;padding:10px 12px;border-radius:8px;border:2px solid #d0e0f0;background:white;cursor:pointer;font-size:14px;font-weight:600;color:#5a7a9a;text-align:center;">☐　同意しない</div>
         </div>
       </div>
-      <button class="btn-go" onclick="p3BuildReport()">レポートを発行する →</button>
+      <div id="consent-warn" style="text-align:center;font-size:13px;color:#e08030;font-weight:600;margin-bottom:10px;">⚠️ 研究同意の選択が必要です</div>
+      <button class="btn-go" id="btn-p3-go" onclick="p3BuildReport()" disabled style="opacity:0.4;cursor:not-allowed;">レポートを発行する →</button>
     </div>
   </div>
 
@@ -1040,6 +1041,7 @@ function p1StartCheck() {
   p1Pid = document.getElementById('p1-pid').value.trim();
   if (!p1Pid) { alert('受診者番号を入力してください'); return; }
   p1Name = document.getElementById('p1-name').value.trim();
+  if (!p1Name) { alert('受診者氏名を入力してください'); return; }
   p1AgeValue = parseInt(document.getElementById('p1-age').value) || 70;
   if (!p1Gender) { alert('性別を選択してください'); return; }
   document.getElementById('hdr-id').textContent = (p1Gender === 'male' ? '♂' : '♀') + ' ' + p1Pid;
@@ -1158,6 +1160,11 @@ function setConsent(v) {
   document.getElementById('consent-no').style.background=v===false?'#fff8f0':'white';
   document.getElementById('consent-no').style.color=v===false?'#e08030':'#5a7a9a';
   document.getElementById('consent-no').textContent=v===false?'☑　同意しない':'☐　同意しない';
+  // Enable report button once consent is selected
+  const btn=document.getElementById('btn-p3-go');
+  if(btn){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+  const warn=document.getElementById('consent-warn');
+  if(warn)warn.style.display='none';
 }
 
 const mnaS={a:2,b:3,c:2,d:2,e:2,f:2};
